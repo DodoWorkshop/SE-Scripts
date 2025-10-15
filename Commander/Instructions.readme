@@ -1,0 +1,28 @@
+﻿--------------------------------------------
+|              [ Commander ]               |
+|               Version 1.0.0              |
+|             by Dodo Workshop             |
+--------------------------------------------
+
+Description:
+------------
+
+This script allows you to:
+- Apply an actions to a set of blocs matching provided filters
+- Set the HUD text of an antenna
+- List available actions a set of blocs matching provided filters (common or sum)
+
+Usage:
+------
+Run the script with the following argument:
+
+  help
+
+This will display the list of available commands.
+
+// Test triggers
+ap -tag=Test -trigger=distance(30) OnOff_On
+ap -tag=Test -trigger=time(30) OnOff_On
+
+
+[Execution]---------------------- Don't touch code below ------------------------------------

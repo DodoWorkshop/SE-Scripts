@@ -1,0 +1,7 @@
+D:\Workspace\SpaceEngineers\DodoWorkshop\GroupCommands\bin\x64\Debug\netframework48\GroupCommands.dll
+D:\Workspace\SpaceEngineers\DodoWorkshop\GroupCommands\bin\x64\Debug\netframework48\GroupCommands.pdb
+D:\Workspace\SpaceEngineers\DodoWorkshop\GroupCommands\obj\x64\Debug\netframework48\GroupCommands.csproj.AssemblyReference.cache
+D:\Workspace\SpaceEngineers\DodoWorkshop\GroupCommands\obj\x64\Debug\netframework48\GroupCommands.GeneratedMSBuildEditorConfig.editorconfig
+D:\Workspace\SpaceEngineers\DodoWorkshop\GroupCommands\obj\x64\Debug\netframework48\GroupCommands.csproj.CoreCompileInputs.cache
+D:\Workspace\SpaceEngineers\DodoWorkshop\GroupCommands\obj\x64\Debug\netframework48\GroupCommands.dll
+D:\Workspace\SpaceEngineers\DodoWorkshop\GroupCommands\obj\x64\Debug\netframework48\GroupCommands.pdb

@@ -1,0 +1,7 @@
+D:\Workspace\SpaceEngineers\DodoWorkshop\Atmothrust\bin\x64\Debug\netframework48\Atmothrust.dll
+D:\Workspace\SpaceEngineers\DodoWorkshop\Atmothrust\bin\x64\Debug\netframework48\Atmothrust.pdb
+D:\Workspace\SpaceEngineers\DodoWorkshop\Atmothrust\obj\x64\Debug\netframework48\Atmothrust.csproj.AssemblyReference.cache
+D:\Workspace\SpaceEngineers\DodoWorkshop\Atmothrust\obj\x64\Debug\netframework48\Atmothrust.GeneratedMSBuildEditorConfig.editorconfig
+D:\Workspace\SpaceEngineers\DodoWorkshop\Atmothrust\obj\x64\Debug\netframework48\Atmothrust.csproj.CoreCompileInputs.cache
+D:\Workspace\SpaceEngineers\DodoWorkshop\Atmothrust\obj\x64\Debug\netframework48\Atmothrust.dll
+D:\Workspace\SpaceEngineers\DodoWorkshop\Atmothrust\obj\x64\Debug\netframework48\Atmothrust.pdb
