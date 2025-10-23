@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace IngameScript
@@ -20,7 +19,7 @@ namespace IngameScript
         {
             return _commands.GetValueOrDefault(name);
         }
-        
-        public ICommand[] GetAllCommands() =>  _commands.Values.ToArray();
+
+        public ICommand[] GetAllCommands() => _commands.Values.ToArray();
     }
 }

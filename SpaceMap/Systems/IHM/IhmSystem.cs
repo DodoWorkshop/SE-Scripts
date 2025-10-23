@@ -21,7 +21,8 @@ namespace IngameScript
                 { DisplayMode.Detection, new DetectionIhmModule(_program) },
             };
 
-            _program.EventBus.RegisterConsumer(@event =>
+            var eventStream = program.Container.GetItem<IEventStream<ISpaceMapEvent>>();
+            eventStream.RegisterConsumer(@event =>
             {
                 if (@event is BlocDetectionPulseEvent)
                     HandleBlocDetectionPulseEvents((BlocDetectionPulseEvent)@event);

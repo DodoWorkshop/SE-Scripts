@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Sandbox.ModAPI.Ingame;
 using VRage.Game.GUI.TextPanel;
 using VRageMath;
@@ -13,15 +12,15 @@ namespace IngameScript
         private readonly IMapEntryRepository _mapEntryRepository;
         private readonly IUserSettingsRepository _userSettingsRepository;
 
-        private  Vector2 BaseRatio = new Vector2(512, 512);
+        private Vector2 BaseRatio = new Vector2(512, 512);
         private const int MapPadding = 40;
         private const int BreakerLength = 20;
 
         public MapIhmModule(Program program)
         {
             _program = program;
-            _mapEntryRepository = program.RepositoryManager.GetRepository<IMapEntryRepository>();
-            _userSettingsRepository = program.RepositoryManager.GetRepository<IUserSettingsRepository>();
+            _mapEntryRepository = program.Container.GetItem<IMapEntryRepository>();
+            _userSettingsRepository = program.Container.GetItem<IUserSettingsRepository>();
         }
 
         public void InitSurface(Panel panel, PanelSurface surface)
@@ -79,13 +78,13 @@ namespace IngameScript
             yield return true;
 
             // Add points
-            var mapInnerFrame =  new RectangleF(
+            var mapInnerFrame = new RectangleF(
                 mapFrame.Position + new Vector2(20 * uniformScale, 20 * uniformScale),
                 new Vector2(mapFrame.Size.X - 40 * uniformScale, mapFrame.Size.Y - 40 * uniformScale)
             );
             var breaker = 0;
             var mapFactor = new Vector2(viewport.Size.X / displayDiameter, viewport.Size.Y / displayDiameter);
-            
+
             foreach (var point in points)
             {
                 var pos = mapInnerFrame.Center + new Vector2(

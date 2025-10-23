@@ -1,9 +1,9 @@
 ﻿namespace IngameScript
 {
-    public class ScriptConfig : IContainerItem
+    public class ScriptConfig
     {
-        public readonly System.Text.RegularExpressions.Regex IdentificationRegex
-            = new System.Text.RegularExpressions.Regex(@"\[SI:(.+)\]");
+        public readonly MyRegex IdentificationRegex
+            = new MyRegex(@"\[SI:(.+)\]");
 
         public const int HistoryLength = 100;
 

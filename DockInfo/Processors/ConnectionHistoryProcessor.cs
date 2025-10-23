@@ -2,7 +2,7 @@
 
 namespace IngameScript
 {
-    public class ConnectionHistoryProcessor : IContainerItem
+    public class ConnectionHistoryProcessor
     {
         private readonly DockGroupRepository _groupRepository;
         private readonly ConnectionHistoryRepository _historyRepository;
@@ -69,6 +69,7 @@ namespace IngameScript
                     dockGroup.Name
                 );
             }
+
             _historyRepository.Register(entry);
         }
     }

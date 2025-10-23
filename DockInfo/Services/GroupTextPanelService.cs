@@ -5,11 +5,11 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 
 namespace IngameScript
 {
-    public class GroupTextPanelService : IContainerItem
+    public class GroupTextPanelService
     {
         private readonly Program _program;
         private readonly ConnectionHistoryRepository _connectionHistoryRepository;
-        
+
         private readonly MyIni _ini = new MyIni();
 
         public GroupTextPanelService(Program program)
@@ -24,7 +24,9 @@ namespace IngameScript
             {
                 try
                 {
-                    var section = group.IsConnected ? DataStructure.ConnectedSection : DataStructure.DisconnectedSection;
+                    var section = group.IsConnected
+                        ? DataStructure.ConnectedSection
+                        : DataStructure.DisconnectedSection;
                     if (_ini.TryParse(textPanel.CustomData))
                     {
                         textPanel.FontSize = _ini.Get(section, DataStructure.FontSizeField)
@@ -51,7 +53,7 @@ namespace IngameScript
                 {
                     _program.Echo($"Failed to read ${textPanel.CustomName} custom data: {e.Message}");
                 }
-                
+
                 if (group.IsConnected)
                 {
                     var sb = new StringBuilder();
@@ -61,7 +63,7 @@ namespace IngameScript
 
                     sb.AppendLine($"[{shipName}]");
                     sb.AppendLine($"Faction: {faction}");
-                    
+
                     var history = _connectionHistoryRepository.GetLastHistory(otherGrid.EntityId);
                     if (history.HasValue)
                     {

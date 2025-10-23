@@ -6,12 +6,10 @@ namespace IngameScript
     {
         public void Save(MyIni ini)
         {
-            
         }
 
         public void Load(MyIni ini)
         {
-            
         }
     }
 }

@@ -25,8 +25,6 @@ namespace IngameScript
             };
         }
 
-        public UpdateType HandledUpdateType => UpdateType.Terminal | UpdateType.Trigger | UpdateType.Mod;
-
         public void Run(string argument, UpdateType updateSource)
         {
             if (updateSource != UpdateType.Terminal && string.IsNullOrEmpty(argument)) return;

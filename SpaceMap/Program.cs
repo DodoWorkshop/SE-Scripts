@@ -1,79 +1,64 @@
-﻿using Sandbox.Game.EntityComponents;
+﻿using System;
 using Sandbox.ModAPI.Ingame;
-using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.ModAPI.Ingame;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using VRage;
-using VRage.Collections;
-using VRage.Game;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
-using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ModAPI.Ingame.Utilities;
-using VRage.Game.ObjectBuilders.Definitions;
-using VRageMath;
 
 namespace IngameScript
 {
     public partial class Program : MyGridProgram
     {
         #region mdk preserve
+
         // ------------------ [ SETTINGS ] ------------------ //
-        
+
         // [ Common ]
-        
+
         // Indicates the way the script will be used.
         // Possible value are:
         //   - Ship: will detect entities and will have a local database that can be synchronized with a database server
         //   - Server: won't detect entities but will store data from ships databases
         //   - ServerShip: will detect entities and will act as a server
         public const string Mode = "Ship";
-        
+
         // The interval (in ticks) between each attempt to detect grid blocks. Low value will impact performances.
         public const int SearchBlockInterval = 100;
 
-        
+
         // --------- [ Don't touch anything below ]--------- //
+
         #endregion
-        
-        
+
+        public readonly IItemContainer Container;
+
         private readonly ISystemManager _systemManager;
-        public readonly IRepositoryManager RepositoryManager;
-        public readonly IStoreManager StoreManager;
-        public readonly IEventBus<ISpaceMapEvent> EventBus;
-        private readonly MyIni _storageIni;
+        private readonly IRepositoryManager _repositoryManager;
 
         public Program()
         {
+            Container = new ItemContainer();
+
+            _repositoryManager = new RepositoryManager(Container);
             _systemManager = new SystemManager(this);
-            RepositoryManager = new RepositoryManager();
-            StoreManager = new StoreManager();
-            EventBus = new SimpleEventBus<ISpaceMapEvent>();
-            _storageIni = new MyIni();
 
             BuildRepositories();
-            BuildStores();
+            BuildCommunicationLayer();
             BuildSystems();
-
-            Load();
 
             Runtime.UpdateFrequency = UpdateFrequency.Update100 | UpdateFrequency.Update10;
         }
 
         private void BuildRepositories()
         {
-            RepositoryManager.RegisterRepository<IMapEntryRepository>(new MapEntryRepository());
-            RepositoryManager.RegisterRepository<IUserSettingsRepository>(new UserSettingsRepository());
+            Container.RegisterItem<IMapEntryRepository>(new MapEntryRepository());
+            Container.RegisterItem<IUserSettingsRepository>(new UserSettingsRepository());
+            Container.RegisterItem<IDetectionDataRepository>(new DetectionDataRepository());
+
+            _repositoryManager.LoadStorage(Storage);
         }
 
-        private void BuildStores()
+        private void BuildCommunicationLayer()
         {
-            StoreManager.RegisterStore<IDetectionDataStore>(new DetectionDataStore());
+            var bus = new SimpleEventBus<ISpaceMapEvent>();
+            Container.RegisterItem<IEventSink<ISpaceMapEvent>>(bus);
+            Container.RegisterItem<IEventStream<ISpaceMapEvent>>(bus);
         }
 
         private void BuildSystems()
@@ -92,48 +77,34 @@ namespace IngameScript
             switch (scriptMode)
             {
                 case ScriptMode.Ship:
-                    _systemManager.RegisterSystem(new ShipSystem(this));
-                    _systemManager.RegisterSystem(new LocalDatabaseSystem(this));
+                    _systemManager.RegisterSystem(SystemGroups.Logic, new ShipSystem(this));
+                    _systemManager.RegisterSystem(SystemGroups.Logic, new LocalDatabaseSystem(this));
                     break;
                 case ScriptMode.Server:
-                    _systemManager.RegisterSystem(new ServerDatabaseSystem());
+                    _systemManager.RegisterSystem(SystemGroups.Logic, new ServerDatabaseSystem());
                     break;
                 case ScriptMode.ServerShip:
-                    _systemManager.RegisterSystem(new ShipSystem(this));
-                    _systemManager.RegisterSystem(new ServerDatabaseSystem());
+                    _systemManager.RegisterSystem(SystemGroups.Logic, new ShipSystem(this));
+                    _systemManager.RegisterSystem(SystemGroups.Logic, new ServerDatabaseSystem());
                     break;
             }
 
-            _systemManager.RegisterSystem(new IhmSystem(this));
-            _systemManager.RegisterSystem(new BlocDetectionTimer(this));
-            _systemManager.RegisterSystem(new CommandSystem(this));
-            
-            // TODO: fine tune groups and update types
-            _systemManager.SetGroupUpdateTypes("default", UpdateType.Update10);
+            _systemManager.RegisterSystem(SystemGroups.Render, new IhmSystem(this));
+            _systemManager.RegisterSystem(SystemGroups.Logic, new BlocDetectionTimer(this));
+            _systemManager.RegisterSystem(SystemGroups.Command, new CommandSystem(this));
+
+            // Set Update types
+            _systemManager.SetGroupUpdateTypes(SystemGroups.Logic, UpdateType.Update10);
+            _systemManager.SetGroupUpdateTypes(SystemGroups.Render, UpdateType.Update100);
+            _systemManager.SetGroupUpdateTypes(SystemGroups.Command,
+                UpdateType.Terminal | UpdateType.Trigger | UpdateType.Mod);
         }
 
         public void Save()
         {
-            _storageIni.Clear();
-            RepositoryManager.SaveRepositories(_storageIni);
-
-            var data = _storageIni.ToString();
+            var data = _repositoryManager.SaveToString();
             Storage = data;
             Me.CustomData = data;
-        }
-
-        private void Load()
-        {
-            if (!string.IsNullOrEmpty(Storage))
-            {
-                if (!_storageIni.TryParse(Storage))
-                {
-                    Storage = "";
-                    throw new Exception("Failed to load data");
-                }
-
-                RepositoryManager.LoadRepositories(_storageIni);
-            }
         }
 
         public void Main(string argument, UpdateType updateSource)

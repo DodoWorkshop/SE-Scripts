@@ -7,11 +7,11 @@ namespace IngameScript
     public class InventoryBinding
     {
         public IMyCargoContainer Block { get; }
-        
+
         public IMyInventory Inventory { get; }
-        
+
         public List<Expectation> Expectations { get; }
-        
+
         public InventoryBinding(IMyCargoContainer block, IMyInventory inventory)
         {
             Block = block;

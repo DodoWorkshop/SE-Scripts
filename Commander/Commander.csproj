@@ -16,13 +16,13 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Mal.Mdk2.References" Version="2.2.4"/>
+        <PackageReference Include="Mal.Mdk2.References" Version="2.2.4" />
     </ItemGroup>
     <ItemGroup>
-        <None Remove="Instructions.readme"/>
-        <AdditionalFiles Include="Instructions.readme"/>
-        <AdditionalFiles Include="thumb.png"/>
+        <None Remove="Instructions.readme" />
+        <AdditionalFiles Include="Instructions.readme" />
+        <AdditionalFiles Include="thumb.png" />
     </ItemGroup>
-    <Import Project="..\BlockLoadingUtils\BlockLoadingUtils.projitems" Label="Shared" />
-    <Import Project="..\PatternUtils\PatternUtils.projitems" Label="Shared" />
+    <Import Project="..\mixins\Repositories\Repositories.projitems" Label="Shared" />
+    <Import Project="..\mixins\Core\Core.projitems" Label="Shared" />
 </Project>

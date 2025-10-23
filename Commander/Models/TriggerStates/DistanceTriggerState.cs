@@ -2,7 +2,7 @@
 
 namespace IngameScript
 {
-    public class DistanceTriggerState :  ITriggerState
+    public class DistanceTriggerState : ITriggerState
     {
         public DistanceTriggerState(Trigger trigger)
         {
@@ -12,7 +12,7 @@ namespace IngameScript
         public Trigger Trigger { get; }
 
         public Vector3D Origin;
-        
+
         public float Distance;
     }
 }

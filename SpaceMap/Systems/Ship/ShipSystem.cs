@@ -6,8 +6,8 @@ namespace IngameScript
     public class ShipSystem : IShipSystem
     {
         private readonly Program _program;
-        private readonly IEventBus<ISpaceMapEvent> _eventBus;
-        private readonly IDetectionDataStore _detectionDataStore;
+        private readonly IEventSink<ISpaceMapEvent> _eventSink;
+        private readonly IDetectionDataRepository _detectionDataRepository;
         private readonly ShipBindings _bindings;
         private readonly IUserSettingsRepository _userSettingsRepository;
 
@@ -16,12 +16,13 @@ namespace IngameScript
         public ShipSystem(Program program)
         {
             _program = program;
-            _eventBus = program.EventBus;
             _bindings = new ShipBindings();
-            _detectionDataStore = program.StoreManager.GetStore<IDetectionDataStore>();
-            _userSettingsRepository = program.RepositoryManager.GetRepository<IUserSettingsRepository>();
+            _detectionDataRepository = program.Container.GetItem<IDetectionDataRepository>();
+            _userSettingsRepository = program.Container.GetItem<IUserSettingsRepository>();
+            _eventSink = program.Container.GetItem<IEventSink<ISpaceMapEvent>>();
 
-            _program.EventBus.RegisterConsumer(@event =>
+            var eventStream = program.Container.GetItem<IEventStream<ISpaceMapEvent>>();
+            eventStream.RegisterConsumer(@event =>
             {
                 if (@event is BlocDetectionPulseEvent)
                     HandleBlocDetectionPulseEvents((BlocDetectionPulseEvent)@event);
@@ -63,28 +64,28 @@ namespace IngameScript
             var scanDistance = _userSettingsRepository.DetectionDistance;
             if (!camera.CanScan(scanDistance))
             {
-                _detectionDataStore.RaycastCharge = (float)camera.AvailableScanRange / scanDistance;
+                _detectionDataRepository.RaycastCharge = (float)camera.AvailableScanRange / scanDistance;
             }
             else
             {
-                _detectionDataStore.RaycastCharge = 1;
+                _detectionDataRepository.RaycastCharge = 1;
                 var result = camera.Raycast(scanDistance);
                 if (result.IsEmpty())
                 {
-                    _detectionDataStore.DetectedEntityInfo = null;
+                    _detectionDataRepository.DetectedEntityInfo = null;
                 }
                 else
                 {
-                    if (_detectionDataStore.DetectedEntityInfo.HasValue
-                        && _detectionDataStore.DetectedEntityInfo.Value.EntityId == result.EntityId
+                    if (_detectionDataRepository.DetectedEntityInfo.HasValue
+                        && _detectionDataRepository.DetectedEntityInfo.Value.EntityId == result.EntityId
                        )
                     {
                         yield return false;
                         yield break;
                     }
 
-                    _detectionDataStore.DetectedEntityInfo = result;
-                    _eventBus.Produce(new EntityDetectedEvent(result));
+                    _detectionDataRepository.DetectedEntityInfo = result;
+                    _eventSink.Produce(new EntityDetectedEvent(result));
                 }
             }
 

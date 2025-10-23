@@ -6,12 +6,10 @@ namespace IngameScript
     {
         public void Save(MyIni ini)
         {
-            throw new System.NotImplementedException();
         }
 
         public void Load(MyIni ini)
         {
-            throw new System.NotImplementedException();
         }
     }
 }

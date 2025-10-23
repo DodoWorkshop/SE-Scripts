@@ -78,7 +78,7 @@ namespace IngameScript
             {
                 sb.AppendLine($"  {usage}");
             }
-            
+
             return sb.ToString();
         }
     }

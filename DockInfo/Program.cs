@@ -37,7 +37,7 @@ namespace IngameScript
 
             // Create Services
             Container.RegisterItem(new GroupTextPanelService(this));
-            
+
             // Create processors
             Container.RegisterItem(new TextPanelConnectionProcessor(this));
             Container.RegisterItem(new ConnectionHistoryProcessor(this));
@@ -65,7 +65,7 @@ namespace IngameScript
                     new HistoryDisplaySystem(this)
                 }
             );
-            
+
             _systemManager.RegisterSystems(
                 SystemGroups.Runtime,
                 UpdateType.Update10,
@@ -74,7 +74,7 @@ namespace IngameScript
                     new ConnectionTriggerSystem(this)
                 }
             );
-            
+
             _systemManager.RegisterSystems(
                 SystemGroups.Command,
                 UpdateType.Terminal | UpdateType.Trigger | UpdateType.Mod,

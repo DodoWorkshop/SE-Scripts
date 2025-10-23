@@ -10,7 +10,7 @@
         public Trigger Trigger { get; }
 
         public long DestinationTick;
-        
+
         public long CurrentTick;
     }
 }

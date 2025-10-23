@@ -6,7 +6,6 @@ namespace IngameScript
     {
         public void Run(string argument, UpdateType updateSource)
         {
-            
         }
     }
 }

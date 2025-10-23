@@ -1,7 +1,0 @@
-D:\Workspace\SpaceEngineers\DodoWorkshop\SpaceMap\bin\x64\Debug\netframework48\SpaceMap.dll
-D:\Workspace\SpaceEngineers\DodoWorkshop\SpaceMap\bin\x64\Debug\netframework48\SpaceMap.pdb
-D:\Workspace\SpaceEngineers\DodoWorkshop\SpaceMap\obj\x64\Debug\netframework48\SpaceMap.csproj.AssemblyReference.cache
-D:\Workspace\SpaceEngineers\DodoWorkshop\SpaceMap\obj\x64\Debug\netframework48\SpaceMap.GeneratedMSBuildEditorConfig.editorconfig
-D:\Workspace\SpaceEngineers\DodoWorkshop\SpaceMap\obj\x64\Debug\netframework48\SpaceMap.csproj.CoreCompileInputs.cache
-D:\Workspace\SpaceEngineers\DodoWorkshop\SpaceMap\obj\x64\Debug\netframework48\SpaceMap.dll
-D:\Workspace\SpaceEngineers\DodoWorkshop\SpaceMap\obj\x64\Debug\netframework48\SpaceMap.pdb
