@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using VRage;
 using VRage.Game.ModAPI.Ingame.Utilities;
 using VRageMath;
 
@@ -107,9 +106,9 @@ namespace IngameScript
             if (!ini.ContainsKey(GetType().Name, MapEntriesSaveKey)) return;
 
             var mapData = ini.Get(GetType().Name, MapEntriesSaveKey).ToString();
-            
-            if(string.IsNullOrWhiteSpace(mapData)) return;
-            
+
+            if (string.IsNullOrWhiteSpace(mapData)) return;
+
             var lines = mapData.Split('\n');
             _mapEntries.Clear();
 
@@ -135,8 +134,8 @@ namespace IngameScript
                             double.Parse(split[4]),
                             double.Parse(split[5]),
                             double.Parse(split[6])
-                            )
                         )
+                    )
                     {
                         CustomName = split[3],
                         UpdateDate = long.Parse(split[7])

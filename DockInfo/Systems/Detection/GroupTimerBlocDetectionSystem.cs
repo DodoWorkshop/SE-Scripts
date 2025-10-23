@@ -87,7 +87,7 @@ namespace IngameScript
                 {
                     _ini.AddSection(section);
                 }
-                
+
                 if (!_ini.ContainsKey(section, DataStructure.TimerBlocActionField))
                 {
                     _ini.Set(section, DataStructure.TimerBlocActionField, nameof(TimerBlocAction.None));

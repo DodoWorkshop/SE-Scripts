@@ -17,7 +17,7 @@ namespace IngameScript
             {
                 return ExpectationRule.Minimum;
             }
-            
+
             if (string.Equals(value, "max", StringComparison.InvariantCultureIgnoreCase))
             {
                 return ExpectationRule.Maximum;

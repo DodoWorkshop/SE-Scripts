@@ -5,3 +5,4 @@ D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\bin\x64\Debug\netframework48\Fil
 D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\bin\x64\Debug\netframework48\FillIt.pdb
 D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\obj\x64\Debug\netframework48\FillIt.dll
 D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\obj\x64\Debug\netframework48\FillIt.pdb
+D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\obj\x64\Debug\netframework48\FillIt.sourcelink.json

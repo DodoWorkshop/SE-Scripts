@@ -67,7 +67,7 @@ namespace IngameScript
         {
             _helpCommand = new HelpCommand(_commandRepository);
             _commandRepository.RegisterCommand(_helpCommand);
-            
+
             _commandRepository.RegisterCommand(new ApplyCommand());
             _commandRepository.RegisterCommand(new ListActionsCommand());
             _commandRepository.RegisterCommand(new ListCommonActionsCommand());

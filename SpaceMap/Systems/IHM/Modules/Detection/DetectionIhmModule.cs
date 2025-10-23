@@ -9,16 +9,16 @@ namespace IngameScript
     public class DetectionIhmModule : IIhmModule
     {
         private readonly Program _program;
-        private readonly IDetectionDataStore _detectionDataStore;
+        private readonly IDetectionDataRepository _detectionDataRepository;
         private readonly IUserSettingsRepository _userSettingsRepository;
         private readonly IMapEntryRepository _mapEntryRepository;
 
         public DetectionIhmModule(Program program)
         {
             _program = program;
-            _detectionDataStore = program.StoreManager.GetStore<IDetectionDataStore>();
-            _userSettingsRepository = program.RepositoryManager.GetRepository<IUserSettingsRepository>();
-            _mapEntryRepository = program.RepositoryManager.GetRepository<IMapEntryRepository>();
+            _detectionDataRepository = program.Container.GetItem<IDetectionDataRepository>();
+            _userSettingsRepository = program.Container.GetItem<IUserSettingsRepository>();
+            _mapEntryRepository = program.Container.GetItem<IMapEntryRepository>();
         }
 
         public void InitSurface(Panel panel, PanelSurface surface)
@@ -30,15 +30,15 @@ namespace IngameScript
         {
             var sb = new StringBuilder();
             sb.AppendLine("< DETECTION >");
-            
+
             sb.AppendLine("\n[ Info ]");
-            sb.AppendLine($"Detection ray charge: {_detectionDataStore.RaycastCharge:P1}");
+            sb.AppendLine($"Detection ray charge: {_detectionDataRepository.RaycastCharge:P1}");
             sb.AppendLine($"Detection distance: {_userSettingsRepository.DetectionDistance}m");
-            
+
             sb.AppendLine("\n[ Detected Entity ]");
-            if (_detectionDataStore.DetectedEntityInfo.HasValue)
+            if (_detectionDataRepository.DetectedEntityInfo.HasValue)
             {
-                var result = _detectionDataStore.DetectedEntityInfo.Value;
+                var result = _detectionDataRepository.DetectedEntityInfo.Value;
 
                 // TODO: manage handled types more clearly
                 if (result.Type != MyDetectedEntityType.Asteroid)
@@ -48,7 +48,7 @@ namespace IngameScript
                 }
                 else
                 {
-                    var entry =  _mapEntryRepository.GetOneById<IMapEntry>(result.EntityId);
+                    var entry = _mapEntryRepository.GetOneById<IMapEntry>(result.EntityId);
                     if (entry == null)
                     {
                         sb.AppendLine("Database status: Saving new entry...");
@@ -61,7 +61,7 @@ namespace IngameScript
                         sb.AppendLine($"Custom name: {entry.CustomName}");
                     }
                 }
-                
+
                 var distance = Vector3D.Distance(result.Position, _program.Me.GetPosition());
                 sb.AppendLine($"Distance: {distance:0}m");
                 sb.AppendLine($"Id: {result.EntityId}");
@@ -70,9 +70,9 @@ namespace IngameScript
             {
                 sb.AppendLine("Noting has been detected");
             }
-            
+
             surface.Surface.WriteText(sb.ToString());
-            
+
             yield return false;
         }
     }

@@ -7,7 +7,7 @@ namespace IngameScript
         public MyItemType ItemType;
 
         public int Amount;
-        
+
         public ExpectationRule Rule;
 
         public Expectation(MyItemType itemType, int amount, ExpectationRule rule)

@@ -3,7 +3,7 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 
 namespace IngameScript
 {
-    public class TimerBlocConnectionProcessor : IContainerItem
+    public class TimerBlocConnectionProcessor
     {
         private readonly Program _program;
         private readonly MyIni _ini = new MyIni();

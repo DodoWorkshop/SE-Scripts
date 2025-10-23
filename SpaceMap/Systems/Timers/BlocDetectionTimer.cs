@@ -5,17 +5,15 @@ namespace IngameScript
     public class BlocDetectionTimer : IBlockDetectionTimer
     {
         private readonly Program _program;
-        private readonly IEventSink<ISpaceMapEvent> _eventBus;
+        private readonly IEventSink<ISpaceMapEvent> _eventSink;
 
         private long _lastPerformedTick = -Program.SearchBlockInterval;
 
         public BlocDetectionTimer(Program program)
         {
             _program = program;
-            _eventBus = program.EventBus;
+            _eventSink = program.Container.GetItem<IEventSink<ISpaceMapEvent>>();
         }
-
-        public string Group => SystemGroups.Logic;
 
         public IEnumerator<bool> Run()
         {
@@ -27,7 +25,7 @@ namespace IngameScript
 
             _lastPerformedTick = _program.Runtime.LifetimeTicks;
 
-            _eventBus.Produce(new BlocDetectionPulseEvent());
+            _eventSink.Produce(new BlocDetectionPulseEvent());
         }
     }
 }

@@ -27,6 +27,8 @@
       <Folder Include="Systems\IHM\Modules\Database\Views\" />
       <Folder Include="Systems\IHM\Modules\General\Views\" />
     </ItemGroup>
-    <Import Project="..\BlockLoadingUtils\BlockLoadingUtils.projitems" Label="Shared" />
-    <Import Project="..\PatternUtils\PatternUtils.projitems" Label="Shared" />
+    <Import Project="..\Mixins\Repositories\Repositories.projitems" Label="Shared" />
+    <Import Project="..\Mixins\Core\Core.projitems" Label="Shared" />
+    <Import Project="..\Mixins\AdvancedBlocLoading\AdvancedBlocLoading.projitems" Label="Shared" />
+    <Import Project="..\mixins\Events\Events.projitems" Label="Shared" />
 </Project>
