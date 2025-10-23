@@ -1,2 +1,6 @@
 ﻿/.idea/
 *.DotSettings.user
+*/obj
+*/bin
+Mixins/*/obj
+Mixins/*/bin

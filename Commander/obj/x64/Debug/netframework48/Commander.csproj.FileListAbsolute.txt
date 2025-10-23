@@ -1,8 +1,0 @@
-D:\Workspace\SpaceEngineers\DodoWorkshop\Commander\bin\x64\Debug\netframework48\Commander.dll
-D:\Workspace\SpaceEngineers\DodoWorkshop\Commander\bin\x64\Debug\netframework48\Commander.pdb
-D:\Workspace\SpaceEngineers\DodoWorkshop\Commander\obj\x64\Debug\netframework48\Commander.csproj.AssemblyReference.cache
-D:\Workspace\SpaceEngineers\DodoWorkshop\Commander\obj\x64\Debug\netframework48\Commander.GeneratedMSBuildEditorConfig.editorconfig
-D:\Workspace\SpaceEngineers\DodoWorkshop\Commander\obj\x64\Debug\netframework48\Commander.csproj.CoreCompileInputs.cache
-D:\Workspace\SpaceEngineers\DodoWorkshop\Commander\obj\x64\Debug\netframework48\Commander.dll
-D:\Workspace\SpaceEngineers\DodoWorkshop\Commander\obj\x64\Debug\netframework48\Commander.pdb
-D:\Workspace\SpaceEngineers\DodoWorkshop\Commander\obj\x64\Debug\netframework48\Commander.sourcelink.json
