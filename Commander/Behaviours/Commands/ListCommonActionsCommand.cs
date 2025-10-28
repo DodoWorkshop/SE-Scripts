@@ -35,14 +35,15 @@ namespace IngameScript
                 {
                     var actions = new List<ITerminalAction>();
                     target.GetActions(actions);
-                    foreach (var action in actions.Where(action => !allActions.Contains(action)))
-                    {
-                        allActions.Remove(action);
-                    }
+
+                    allActions = allActions
+                        .Where(savedAction => actions.Any(a => a.Id.Equals(savedAction.Id)))
+                        .ToList();
                 }
             }
 
             // Display
+            program.Echo("\n<Result>--------------------");
             if (allActions == null || allActions.Count == 0)
             {
                 program.Echo("No common actions found between those matching targets:");

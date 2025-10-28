@@ -34,12 +34,14 @@ namespace IngameScript
                 switch (option.Name)
                 {
                     case "tag":
-                        program.Echo($"Tag filter set to {option.Value}");
+                        if (Program.LogExecution)
+                            program.Echo($"Tag filter set to {option.Value}");
                         filters.Add(bloc => bloc.CustomName.Contains(option.Value));
                         break;
 
                     case "name":
-                        program.Echo($"Name filter set to {option.Value}");
+                        if (Program.LogExecution)
+                            program.Echo($"Name filter set to {option.Value}");
                         filters.Add(bloc => bloc.CustomName.Equals(option.Value));
                         break;
 
@@ -59,7 +61,7 @@ namespace IngameScript
                                     $"\"{option.Value}\" is not a valid value for grid. Allowed values are: true, false");
                         }
 
-                        program.Echo(gridLimit
+                        if (Program.LogExecution) program.Echo(gridLimit
                             ? "Selection limited to current grid"
                             : "No grid limit set for selection"
                         );
@@ -72,7 +74,8 @@ namespace IngameScript
                         }
 
                         groupName = option.Value;
-                        program.Echo($"Selection limited to group \"{groupName}\"");
+                        if (Program.LogExecution)
+                            program.Echo($"Selection limited to group \"{groupName}\"");
                         break;
 
                     default:
@@ -113,7 +116,8 @@ namespace IngameScript
                 throw new Exception("No targets are matching the provided filters");
             }
 
-            program.Echo($"{targets.Count} targets matching the provided filters");
+            if (Program.LogExecution)
+                program.Echo($"{targets.Count} targets matching the provided filters");
 
             return targets;
         }

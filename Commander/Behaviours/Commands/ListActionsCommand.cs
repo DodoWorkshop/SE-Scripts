@@ -31,6 +31,7 @@ namespace IngameScript
                 .Distinct();
 
             // Display
+            program.Echo("\n<Result>--------------------");
             var sb = new StringBuilder();
             sb.AppendLine("Available actions:");
             foreach (var action in allActions)

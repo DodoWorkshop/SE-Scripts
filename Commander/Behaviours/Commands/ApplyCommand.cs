@@ -21,13 +21,18 @@ namespace IngameScript
             // Applying action
             foreach (var action in input.Arguments)
             {
-                program.Echo($"\nApplying \"{action}\" to:");
+                if (Program.LogExecution)
+                    program.Echo($"\nApplying \"{action}\" to:");
 
                 foreach (var bloc in targets)
                 {
-                    program.Echo($"- {bloc.CustomName}");
+                    if (Program.LogExecution)
+                        program.Echo($"- {bloc.CustomName}");
                     bloc.ApplyAction(action);
                 }
+                
+                program.Echo("\n<Result>--------------------");
+                program.Echo("Done");
             }
         }
 

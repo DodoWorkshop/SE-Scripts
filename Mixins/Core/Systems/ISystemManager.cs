@@ -5,7 +5,7 @@ namespace IngameScript
 {
     public interface ISystemManager
     {
-        void SetGroupUpdateTypes(string group, UpdateType updateType);
+        void SetGroupUpdateFrequency(string group, UpdateFrequency updateFrequency);
 
         void RegisterSystem(string group, ISystem system);
 
@@ -13,7 +13,7 @@ namespace IngameScript
 
         void RunSystems(string group, UpdateType updateSource);
 
-        void RegisterSystems(string group, UpdateType updateSource, IEnumerable<ISystem> systems);
+        void RegisterSystems(string group, UpdateFrequency updateFrequency, IEnumerable<ISystem> systems);
 
         UpdateFrequency GetUpdateFrequency();
     }

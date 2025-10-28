@@ -26,7 +26,11 @@ namespace IngameScript
 
         public ConnectionHistory[] GetPage(int amount, int page)
         {
-            return _data.GetRange(page, amount >= _data.Count ? _data.Count : amount)
+            var offset = page * amount;
+            return _data.GetRange(
+                    offset,
+                    offset + amount >= _data.Count ? _data.Count - offset : amount
+                )
                 .ToArray();
         }
 

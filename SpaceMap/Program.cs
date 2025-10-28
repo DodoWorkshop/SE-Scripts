@@ -5,26 +5,25 @@ namespace IngameScript
 {
     public partial class Program : MyGridProgram
     {
-        #region mdk preserve
+    #region mdk preserve
 
-        // ------------------ [ SETTINGS ] ------------------ //
+    // ------------------ [ SETTINGS ] ------------------ //
 
-        // [ Common ]
+    // [ Common ]
 
-        // Indicates the way the script will be used.
-        // Possible value are:
-        //   - Ship: will detect entities and will have a local database that can be synchronized with a database server
-        //   - Server: won't detect entities but will store data from ships databases
-        //   - ServerShip: will detect entities and will act as a server
-        public const string Mode = "Ship";
+    // Indicates the way the script will be used.
+    // Possible value are:
+    //   - Ship: will detect entities and will have a local database that can be synchronized with a database server
+    //   - Server: won't detect entities but will store data from ships databases
+    //   - ServerShip: will detect entities and will act as a server
+    public const string Mode = "Ship";
 
-        // The interval (in ticks) between each attempt to detect grid blocks. Low value will impact performances.
-        public const int SearchBlockInterval = 100;
+    // The interval (in ticks) between each attempt to detect grid blocks. Low value will impact performances.
+    public const int SearchBlockInterval = 100;
 
 
-        // --------- [ Don't touch anything below ]--------- //
-
-        #endregion
+    // --------- [ Don't touch anything below ]--------- //
+    #endregion
 
         public readonly IItemContainer Container;
 
@@ -94,10 +93,8 @@ namespace IngameScript
             _systemManager.RegisterSystem(SystemGroups.Command, new CommandSystem(this));
 
             // Set Update types
-            _systemManager.SetGroupUpdateTypes(SystemGroups.Logic, UpdateType.Update10);
-            _systemManager.SetGroupUpdateTypes(SystemGroups.Render, UpdateType.Update100);
-            _systemManager.SetGroupUpdateTypes(SystemGroups.Command,
-                UpdateType.Terminal | UpdateType.Trigger | UpdateType.Mod);
+            _systemManager.SetGroupUpdateFrequency(SystemGroups.Logic, UpdateFrequency.Update10);
+            _systemManager.SetGroupUpdateFrequency(SystemGroups.Render, UpdateFrequency.Update100);
         }
 
         public void Save()

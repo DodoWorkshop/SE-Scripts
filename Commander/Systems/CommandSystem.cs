@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Sandbox.ModAPI.Ingame;
 using VRage.Game.ModAPI.Ingame.Utilities;
 
@@ -7,27 +6,21 @@ namespace IngameScript
 {
     public class CommandSystem : IRuntimeSystem
     {
-        private string HelpMessage =>
-            $"Run script with \"{_helpCommand.Names.First()}\" argument to get available commands";
+        private static string HelpMessage =>
+            "Run script with \"help\" argument to get available commands";
 
         private readonly MyCommandLine _commandLine;
         private readonly Program _program;
         private readonly CommandReader _commandReader;
         private readonly CommandRepository _commandRepository;
 
-        private ICommand _helpCommand;
-
         public CommandSystem(Program program)
         {
             _program = program;
-            _commandLine = new MyCommandLine();
-            _commandReader = new CommandReader();
-            _commandRepository = new CommandRepository();
-
-            RegisterCommands();
+            _commandLine = _program.Container.GetItem<MyCommandLine>();
+            _commandReader = _program.Container.GetItem<CommandReader>();
+            _commandRepository = _program.Container.GetItem<CommandRepository>();
         }
-
-        public UpdateType HandledUpdateType => UpdateType.Terminal | UpdateType.Trigger | UpdateType.Mod;
 
         public void Run(string argument, UpdateType updateSource)
         {
@@ -51,9 +44,16 @@ namespace IngameScript
             // Execution
             try
             {
-                _program.Echo("[Command Info]--------------------");
-                _program.Echo(commandInput.ToString());
-                _program.Echo("[Command Execution]---------------");
+                if (Program.LogCommandInfo)
+                {
+                    _program.Echo("<Command Info>--------------------");
+                    _program.Echo(commandInput.ToString());
+                }
+
+                if (Program.LogExecution)
+                {
+                    _program.Echo("<Command Execution>---------------");
+                }
                 command.Execute(_program, commandInput);
             }
             catch (Exception e)
@@ -61,17 +61,6 @@ namespace IngameScript
                 throw new Exception(
                     $"An error occured while executing command \"{commandInput.Command}\": {e.Message}");
             }
-        }
-
-        private void RegisterCommands()
-        {
-            _helpCommand = new HelpCommand(_commandRepository);
-            _commandRepository.RegisterCommand(_helpCommand);
-
-            _commandRepository.RegisterCommand(new ApplyCommand());
-            _commandRepository.RegisterCommand(new ListActionsCommand());
-            _commandRepository.RegisterCommand(new ListCommonActionsCommand());
-            _commandRepository.RegisterCommand(new SetAntennaTextCommand());
         }
     }
 }

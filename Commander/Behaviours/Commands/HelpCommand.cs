@@ -26,7 +26,7 @@ namespace IngameScript
                 "Use this script to send commands to block or groups with specific restriction and arguments\n");
 
             sb.AppendLine("----------");
-            sb.AppendLine("Usage: [commandName] [-options]* [arguments]*\n");
+            sb.AppendLine("Usage: {commandName} {-options}* {arguments}*\n");
             sb.AppendLine("Available commands:\n");
 
             foreach (var command in _commandRepository.GetAllCommands())

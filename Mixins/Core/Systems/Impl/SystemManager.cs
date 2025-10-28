@@ -13,16 +13,16 @@ namespace IngameScript
             = new Dictionary<string, IEnumerator<bool>>();
 
         private readonly Dictionary<string, List<ISystem>> _systems = new Dictionary<string, List<ISystem>>();
-        private readonly Dictionary<string, UpdateType> _updateTypes = new Dictionary<string, UpdateType>();
+        private readonly Dictionary<string, UpdateFrequency> _updateFrequencies = new Dictionary<string, UpdateFrequency>();
 
         public SystemManager(MyGridProgram program)
         {
             _program = program;
         }
 
-        public void SetGroupUpdateTypes(string groupName, UpdateType updateType)
+        public void SetGroupUpdateFrequency(string groupName, UpdateFrequency updateFrequency)
         {
-            _updateTypes[groupName] = updateType;
+            _updateFrequencies[groupName] = updateFrequency;
         }
 
         public void RegisterSystem(string group, ISystem system)
@@ -49,35 +49,52 @@ namespace IngameScript
             content.Remove(system);
         }
 
-        public void RunSystems(string argument, UpdateType updateSource)
+        public void RunSystems(string argument, UpdateType updateType)
         {
+            var updateFrequency = UpdateFrequency.None;
+            switch (updateType)
+            {
+                case UpdateType.Update1:
+                    updateFrequency = UpdateFrequency.Update1;
+                    break;
+                case UpdateType.Update10:
+                    updateFrequency = UpdateFrequency.Update10;
+                    break;
+                case UpdateType.Update100:
+                    updateFrequency = UpdateFrequency.Update100;
+                    break;
+            }
+            
             foreach (var groupKey in _systems.Keys)
             {
-                UpdateType runtime;
-                if (!_updateTypes.TryGetValue(groupKey, out runtime))
-                {
-                    throw new Exception($"No update type declared for group {groupKey}");
-                }
-
-                if (!runtime.HasFlag(updateSource)) continue;
-
                 IEnumerator<bool> coroutine;
+                
+                // Check if frequency has been set
+                UpdateFrequency groupUpdateFrequency;
+                if (_updateFrequencies.TryGetValue(groupKey, out groupUpdateFrequency))
+                {
+                    // Skip if no match
+                    if (!groupUpdateFrequency.HasFlag(updateFrequency)) continue;
+                }
+                
+                // Attempt to get coroutine
                 if (!_asyncSystemCoroutines.TryGetValue(groupKey, out coroutine))
                 {
-                    coroutine = RunLoop(argument, updateSource, groupKey);
+                    coroutine = RunLoop(argument, updateType, groupKey);
                     _asyncSystemCoroutines.Add(groupKey, coroutine);
                 }
 
-                if (coroutine.MoveNext()) continue;
+                // Check next
+                if (coroutine.MoveNext() && coroutine.Current) continue;
                 coroutine.Dispose();
 
                 _asyncSystemCoroutines.Remove(groupKey);
             }
         }
 
-        public void RegisterSystems(string group, UpdateType updateSource, IEnumerable<ISystem> systems)
+        public void RegisterSystems(string group, UpdateFrequency updateFrequency, IEnumerable<ISystem> systems)
         {
-            SetGroupUpdateTypes(group, updateSource);
+            SetGroupUpdateFrequency(group, updateFrequency);
             foreach (var system in systems)
             {
                 RegisterSystem(group, system);
@@ -86,24 +103,9 @@ namespace IngameScript
 
         public UpdateFrequency GetUpdateFrequency()
         {
-            var result = UpdateFrequency.None;
-            foreach (var updateType in _updateTypes.Values.Distinct())
-            {
-                switch (updateType)
-                {
-                    case UpdateType.Update1:
-                        result |= UpdateFrequency.Update1;
-                        break;
-                    case UpdateType.Update10:
-                        result |= UpdateFrequency.Update10;
-                        break;
-                    case UpdateType.Update100:
-                        result |= UpdateFrequency.Update100;
-                        break;
-                }
-            }
-
-            return result;
+            return _updateFrequencies.Values
+                .Distinct()
+                .Aggregate(UpdateFrequency.None, (current, updateFrequency) => current | updateFrequency);
         }
 
         private IEnumerator<bool> RunLoop(string argument, UpdateType updateSource, string group)
@@ -121,8 +123,6 @@ namespace IngameScript
                     {
                         _program.Echo($"\n{e.Message}");
                     }
-
-                    yield return true;
                 }
                 else if (system is IAsyncSystem)
                 {
