@@ -12,28 +12,28 @@ namespace IngameScript
         }
 
         public string Command { get; }
-        
+
         public CommandOption[] Options { get; }
-        
+
         public string[] Arguments { get; }
-        
+
         public override string ToString()
         {
             var sb = new StringBuilder();
-            
+
             sb.AppendLine($"Command name: {Command}");
             sb.AppendLine("\nOptions:");
             foreach (var option in Options)
             {
                 sb.AppendLine($"- {option.Name}: {option.Value}");
             }
-            
+
             sb.AppendLine("\nArguments:");
             foreach (var argument in Arguments)
             {
                 sb.AppendLine($"- {argument}");
             }
-            
+
             return sb.ToString();
         }
     }

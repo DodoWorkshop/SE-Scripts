@@ -5,8 +5,8 @@ namespace IngameScript
 {
     public class CommandReader
     {
-        private readonly System.Text.RegularExpressions.Regex _optionRegex =
-            new System.Text.RegularExpressions.Regex(@"-([a-z]+)=(?:""([^""]+)|(\S+))");
+        private readonly MyRegex _optionRegex =
+            new MyRegex(@"-([a-z]+)=(?:""([^""]+)|(\S+))");
 
         public CommandInput ReadCommand(MyCommandLine commandLine)
         {

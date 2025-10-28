@@ -2,6 +2,5 @@
 {
     public interface IBlockDetectionTimer : IAsyncSystem
     {
-        
     }
 }

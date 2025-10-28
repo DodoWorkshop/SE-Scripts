@@ -1,6 +1,6 @@
 ﻿namespace IngameScript
 {
-    public class TextPanelConnectionProcessor : IContainerItem
+    public class TextPanelConnectionProcessor
     {
         private readonly GroupTextPanelService _groupTextPanelService;
         private readonly DockGroupRepository _groupRepository;

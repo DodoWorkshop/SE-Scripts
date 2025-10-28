@@ -10,13 +10,13 @@ namespace IngameScript
         public uint DetectionDistance { get; set; } = 10000;
 
         public uint MapScale { get; set; } = 5000;
-        
+
         public void Save(MyIni ini)
         {
             var sectionKey = GetType().Name;
             ini.AddSection(sectionKey);
-            ini.Set(sectionKey,DetectionDistanceKey, DetectionDistance);
-            ini.Set(sectionKey,MapScaleKey, MapScale);
+            ini.Set(sectionKey, DetectionDistanceKey, DetectionDistance);
+            ini.Set(sectionKey, MapScaleKey, MapScale);
         }
 
         public void Load(MyIni ini)

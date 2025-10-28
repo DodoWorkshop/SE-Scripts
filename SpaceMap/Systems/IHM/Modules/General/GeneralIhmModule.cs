@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using Sandbox.ModAPI.Ingame;
 using VRage.Game.GUI.TextPanel;
 using VRageMath;
 
@@ -14,7 +13,7 @@ namespace IngameScript
         public GeneralIhmModule(Program program)
         {
             _program = program;
-            _mapEntryRepository = program.RepositoryManager.GetRepository<IMapEntryRepository>();
+            _mapEntryRepository = program.Container.GetItem<IMapEntryRepository>();
         }
 
         public void InitSurface(Panel panel, PanelSurface surface)

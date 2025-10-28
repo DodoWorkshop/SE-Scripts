@@ -7,14 +7,14 @@ namespace IngameScript
     public struct ReferenceBinding
     {
         private readonly IMyGridTerminalSystem _gridTerminalSystem;
-        
+
         public List<InventoryBinding> ContainerDatas { get; }
-        
+
         public ReferenceBinding(Program program)
         {
             _gridTerminalSystem = program.GridTerminalSystem;
             ContainerDatas = new List<InventoryBinding>();
-            
+
             ComputeContainerDatas();
         }
 
@@ -29,7 +29,7 @@ namespace IngameScript
             {
                 // Clear custom data
                 containerData.Block.CustomData = "";
-                
+
                 ContainerDatas.Remove(containerData);
             }
 
@@ -45,7 +45,7 @@ namespace IngameScript
                 }
 
                 var containerData = new InventoryBinding(container, container.GetInventory());
-                
+
                 ContainerDatas.Add(containerData);
             }
         }

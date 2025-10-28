@@ -11,8 +11,8 @@ namespace IngameScript
 
         private readonly Dictionary<long, Panel> _panelsPerBlockId = new Dictionary<long, Panel>();
 
-        private readonly System.Text.RegularExpressions.Regex _displayNameRegex =
-            new System.Text.RegularExpressions.Regex(Settings.DisplayNameRegex);
+        private readonly MyRegex _displayNameRegex =
+            new MyRegex(Settings.DisplayNameRegex);
 
         public void SearchScreens(Program program)
         {

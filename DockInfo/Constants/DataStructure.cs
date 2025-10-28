@@ -11,7 +11,7 @@
         public const string TextAlignField = "Alignment";
 
         public const string TextPaddingField = "TextPadding";
-        
+
         public const string TimerBlocActionField = "Action";
     }
 }

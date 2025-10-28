@@ -1,7 +1,0 @@
-D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\obj\x64\Debug\netframework48\FillIt.csproj.AssemblyReference.cache
-D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\obj\x64\Debug\netframework48\FillIt.GeneratedMSBuildEditorConfig.editorconfig
-D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\obj\x64\Debug\netframework48\FillIt.csproj.CoreCompileInputs.cache
-D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\bin\x64\Debug\netframework48\FillIt.dll
-D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\bin\x64\Debug\netframework48\FillIt.pdb
-D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\obj\x64\Debug\netframework48\FillIt.dll
-D:\Workspace\SpaceEngineers\DodoWorkshop\FillIt\obj\x64\Debug\netframework48\FillIt.pdb

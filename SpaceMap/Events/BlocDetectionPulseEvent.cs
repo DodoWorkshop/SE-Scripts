@@ -2,6 +2,5 @@
 {
     public struct BlocDetectionPulseEvent : ISpaceMapEvent
     {
-        
     }
 }

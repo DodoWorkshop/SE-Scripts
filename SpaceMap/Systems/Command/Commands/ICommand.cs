@@ -5,7 +5,7 @@ namespace IngameScript
     public interface ICommand
     {
         string[] Names { get; }
-        
+
         void Execute(MyCommandLine commandLine);
 
         string GetUsage();

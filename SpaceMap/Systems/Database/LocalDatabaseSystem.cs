@@ -5,17 +5,16 @@ namespace IngameScript
 {
     public class LocalDatabaseSystem : IDatabaseSystem
     {
-        private readonly Program _program;
-        private readonly IEventBus<ISpaceMapEvent> _eventBus;
+        private readonly IEventSink<ISpaceMapEvent> _eventSink;
         private readonly IMapEntryRepository _mapEntryRepository;
 
         public LocalDatabaseSystem(Program program)
         {
-            _program = program;
-            _eventBus = program.EventBus;
-            _mapEntryRepository = program.RepositoryManager.GetRepository<IMapEntryRepository>();
+            _eventSink = program.Container.GetItem<IEventSink<ISpaceMapEvent>>();
+            _mapEntryRepository = program.Container.GetItem<IMapEntryRepository>();
 
-            _eventBus.RegisterConsumer(@event =>
+            var eventStream = program.Container.GetItem<IEventStream<ISpaceMapEvent>>();
+            eventStream.RegisterConsumer(@event =>
             {
                 if (@event is EntityDetectedEvent)
                 {
@@ -33,8 +32,7 @@ namespace IngameScript
                 if (entry != null)
                 {
                     _mapEntryRepository.Save(entry);
-
-                    _eventBus.Produce(new NewMapEntryRegisteredEvent(entry));
+                    _eventSink.Produce(new NewMapEntryRegisteredEvent(entry));
                 }
             }
         }

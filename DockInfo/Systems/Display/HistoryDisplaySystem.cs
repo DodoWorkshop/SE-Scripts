@@ -42,10 +42,12 @@ namespace IngameScript
                     switch (line.HistoryType)
                     {
                         case HistoryType.Landing:
-                            sb.AppendLine($"[{line.Timestamp:MM/dd HH:mm:ss}][{line.DockGroupName}<-Docked] {line.GridName}");
+                            sb.AppendLine(
+                                $"[{line.Timestamp:MM/dd HH:mm:ss}][{line.DockGroupName}<-Docked] {line.GridName}");
                             break;
                         case HistoryType.Takeoff:
-                            sb.AppendLine($"[{line.Timestamp:MM/dd HH:mm:ss}][{line.DockGroupName}->Undocked] {line.GridName}");
+                            sb.AppendLine(
+                                $"[{line.Timestamp:MM/dd HH:mm:ss}][{line.DockGroupName}->Undocked] {line.GridName}");
                             break;
                         default:
                             throw new Exception($"Unknown history type {line.HistoryType}");

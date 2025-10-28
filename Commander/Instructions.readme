@@ -20,9 +20,3 @@ Run the script with the following argument:
 
 This will display the list of available commands.
 
-// Test triggers
-ap -tag=Test -trigger=distance(30) OnOff_On
-ap -tag=Test -trigger=time(30) OnOff_On
-
-
-[Execution]---------------------- Don't touch code below ------------------------------------

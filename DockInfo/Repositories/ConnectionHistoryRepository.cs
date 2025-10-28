@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using VRage.Game.ModAPI.Ingame.Utilities;
 
 namespace IngameScript
@@ -27,7 +26,11 @@ namespace IngameScript
 
         public ConnectionHistory[] GetPage(int amount, int page)
         {
-            return _data.GetRange(page, amount >= _data.Count ? _data.Count : amount)
+            var offset = page * amount;
+            return _data.GetRange(
+                    offset,
+                    offset + amount >= _data.Count ? _data.Count - offset : amount
+                )
                 .ToArray();
         }
 
@@ -35,7 +38,7 @@ namespace IngameScript
         {
             return _data.FirstOrDefault(history => history.DockGroupName.Equals(groupName));
         }
-        
+
         public ConnectionHistory? GetLastHistory(long gridId)
         {
             return _data.FirstOrDefault(history => history.GridId.Equals(gridId));
@@ -62,7 +65,7 @@ namespace IngameScript
             var split = ini.Get(SaveKey, "data")
                 .ToString()
                 .Split(';');
-            
+
             _data.Clear();
 
             foreach (var line in split)

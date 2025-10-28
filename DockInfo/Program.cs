@@ -37,7 +37,7 @@ namespace IngameScript
 
             // Create Services
             Container.RegisterItem(new GroupTextPanelService(this));
-            
+
             // Create processors
             Container.RegisterItem(new TextPanelConnectionProcessor(this));
             Container.RegisterItem(new ConnectionHistoryProcessor(this));
@@ -47,7 +47,7 @@ namespace IngameScript
             _systemManager = new SystemManager(this);
             _systemManager.RegisterSystems(
                 SystemGroups.Detection,
-                UpdateType.Update100,
+                UpdateFrequency.Update100,
                 new List<ISystem>
                 {
                     new GroupDetectionSystem(this),
@@ -59,30 +59,23 @@ namespace IngameScript
 
             _systemManager.RegisterSystems(
                 SystemGroups.Display,
-                UpdateType.Update10,
+                UpdateFrequency.Update10,
                 new List<ISystem>
                 {
                     new HistoryDisplaySystem(this)
                 }
             );
-            
+
             _systemManager.RegisterSystems(
                 SystemGroups.Runtime,
-                UpdateType.Update10,
+                UpdateFrequency.Update10,
                 new List<ISystem>
                 {
                     new ConnectionTriggerSystem(this)
                 }
             );
             
-            _systemManager.RegisterSystems(
-                SystemGroups.Command,
-                UpdateType.Terminal | UpdateType.Trigger | UpdateType.Mod,
-                new List<ISystem>
-                {
-                    new CommandSystem(this)
-                }
-            );
+            _systemManager.RegisterSystem(SystemGroups.Command, new CommandSystem(this));
 
             Runtime.UpdateFrequency = _systemManager.GetUpdateFrequency();
         }

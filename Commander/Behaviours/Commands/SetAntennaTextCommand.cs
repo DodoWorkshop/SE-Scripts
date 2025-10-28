@@ -28,13 +28,18 @@ namespace IngameScript
             var targets = _blocMatcher.GetMatchingBlocs<IMyRadioAntenna>(program, input.Options);
 
             // Applying action
-            program.Echo("\nSetting message to:");
+            if (Program.LogExecution)
+                program.Echo("\nSetting message to:");
 
             foreach (var bloc in targets)
             {
-                program.Echo($"- {bloc.CustomName}");
+                if (Program.LogExecution)
+                    program.Echo($"- {bloc.CustomName}");
                 bloc.HudText = message;
             }
+            
+            program.Echo("\n<Result>--------------------");
+            program.Echo("Done");
         }
 
         public string GetUsage()
@@ -51,7 +56,7 @@ namespace IngameScript
             {
                 sb.AppendLine($"  {usage}");
             }
-            
+
             return sb.ToString();
         }
     }
