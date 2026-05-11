@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Sandbox.ModAPI.Ingame;
 using VRage.Game.GUI.TextPanel;
@@ -12,9 +12,10 @@ namespace IngameScript
         private readonly IMapEntryRepository _mapEntryRepository;
         private readonly IUserSettingsRepository _userSettingsRepository;
 
-        private Vector2 BaseRatio = new Vector2(512, 512);
+        private readonly Vector2 BaseRatio = new Vector2(512, 512);
         private const int MapPadding = 40;
         private const int BreakerLength = 20;
+
 
         public MapIhmModule(Program program)
         {
@@ -31,7 +32,6 @@ namespace IngameScript
 
         public IEnumerator<bool> RenderTo(Panel panel, PanelSurface surface)
         {
-            // Build viewport
             var frame = surface.Surface.DrawFrame();
             var viewport = new RectangleF(
                 (surface.Surface.TextureSize - surface.Surface.SurfaceSize) / 2f,
@@ -41,14 +41,12 @@ namespace IngameScript
             var scaleFactor = new Vector2(viewport.Size.X / BaseRatio.X, viewport.Size.Y / BaseRatio.Y);
             var uniformScale = Math.Min(scaleFactor.X, scaleFactor.Y);
 
-            // Build Map frame
             var uniformMapPadding = uniformScale * MapPadding;
             var minViewportAxis = Math.Min(viewport.Size.X, viewport.Size.Y);
             var mapSize = new Vector2(minViewportAxis - uniformMapPadding * 2, minViewportAxis - uniformMapPadding * 2);
-            var mapFrame = new RectangleF(
-                viewport.Center - mapSize / 2,
-                mapSize
-            );
+            var mapFrame = new RectangleF(viewport.Center - mapSize / 2, mapSize);
+
+            // Map border
             frame.Add(new MySprite
             {
                 Type = SpriteType.TEXTURE,
@@ -59,11 +57,10 @@ namespace IngameScript
                 Alignment = TextAlignment.CENTER
             });
 
-            // Add center
+            // Center dot (ship position)
             frame.Add(new MySprite
             {
                 Type = SpriteType.TEXTURE,
-                //Data = "AH_BoreSight", // TODO: show ship orientation
                 Data = "Circle",
                 Position = mapFrame.Center,
                 Size = Vector2.One * 15 * uniformScale,
@@ -77,36 +74,59 @@ namespace IngameScript
 
             yield return true;
 
-            // Add points
             var mapInnerFrame = new RectangleF(
                 mapFrame.Position + new Vector2(20 * uniformScale, 20 * uniformScale),
                 new Vector2(mapFrame.Size.X - 40 * uniformScale, mapFrame.Size.Y - 40 * uniformScale)
             );
             var breaker = 0;
             var mapFactor = new Vector2(viewport.Size.X / displayDiameter, viewport.Size.Y / displayDiameter);
+            var newEntryColor = new Color(80, 220, 140);
 
             foreach (var point in points)
             {
+                // Isometric perspective: objects above (positive depth) shift up-right on screen
+                var depthInScreen = (float)(point.Depth * mapFactor.X);
+                var perspectiveShift = depthInScreen * Program.MapPerspectiveStrength;
+
                 var pos = mapInnerFrame.Center + new Vector2(
-                    (float)(point.Position.X * mapFactor.X),
-                    (float)(point.Position.Y * mapFactor.Y)
+                    (float)(point.Position.X * mapFactor.X) + perspectiveShift * 0.5f,
+                    (float)(point.Position.Y * mapFactor.Y) - perspectiveShift
                 );
+
+                var isNew = TimeUtils.IsNew(point.UpdateDate);
+                var dotColor = isNew ? newEntryColor : surface.Surface.ScriptForegroundColor;
+                var dotSize = Math.Max(8f, 18 * uniformScale + 8 * (float)(Math.Abs(point.Depth) / displayDiameter));
+
                 frame.Add(new MySprite
                 {
                     Type = SpriteType.TEXTURE,
                     Data = "Circle",
                     Position = pos,
-                    Size = Vector2.One * 20 * uniformScale + Vector2.One * 20 * (float)(point.Depth / displayDiameter),
-                    Color = surface.Surface.ScriptForegroundColor,
+                    Size = Vector2.One * dotSize,
+                    Color = dotColor,
                     Alignment = TextAlignment.CENTER
                 });
 
+                if (isNew)
+                {
+                    frame.Add(new MySprite
+                    {
+                        Type = SpriteType.TEXTURE,
+                        Data = "CircleHollow",
+                        Position = pos,
+                        Size = Vector2.One * dotSize * 2.2f,
+                        Color = dotColor,
+                        Alignment = TextAlignment.CENTER
+                    });
+                }
+
+                var ageStr = TimeUtils.FormatAge(point.UpdateDate, shortFormat: true);
                 frame.Add(new MySprite
                 {
                     Type = SpriteType.TEXT,
-                    Data = $"{point.Label}",
+                    Data = $"{point.Label} ({ageStr})",
                     Color = surface.Surface.ScriptForegroundColor,
-                    Position = pos + new Vector2(0, -40 * uniformScale),
+                    Position = pos + new Vector2(0, -38 * uniformScale),
                     Alignment = TextAlignment.CENTER,
                     RotationOrScale = uniformScale * 0.8f
                 });
@@ -142,7 +162,6 @@ namespace IngameScript
             });
 
             frame.Dispose();
-
             yield return false;
         }
 
@@ -153,48 +172,35 @@ namespace IngameScript
             var up = referenceBlock.WorldMatrix.Up;
             var forward = Vector3D.Cross(right, up);
 
-            var points2D = new List<MapPoint>();
-            var min = new Vector2D(double.MaxValue, double.MaxValue);
-            var max = new Vector2D(double.MinValue, double.MinValue);
+            var points = new List<MapPoint>();
 
-            foreach (var worldPoint in _mapEntryRepository
-                         .GetAllInArea<IMapEntry>(_program.Me.GetPosition(), searchRadius)
-                    )
+            foreach (var entry in _mapEntryRepository.GetAllInArea<IMapEntry>(_program.Me.GetPosition(), searchRadius))
             {
-                var relative = worldPoint.Position - screenCenter;
-
-                var x = (float)Vector3D.Dot(relative, right);
+                var relative = entry.Position - screenCenter;
+                var x = -(float)Vector3D.Dot(relative, right);
                 var y = (float)Vector3D.Dot(relative, forward);
-                var p = new Vector2(x, y);
+                var depth = Vector3D.Dot(relative, up);
 
-                var mapPoint = new MapPoint(
-                    string.IsNullOrEmpty(worldPoint.CustomName) ? worldPoint.BaseName : worldPoint.CustomName,
-                    p,
-                    (float)Vector3D.Dot(relative, up)
-                );
-                points2D.Add(mapPoint);
-
-                min = Vector2D.Min(min, p);
-                max = Vector2D.Max(max, p);
+                var label = string.IsNullOrEmpty(entry.CustomName) ? entry.BaseName : entry.CustomName;
+                points.Add(new MapPoint(label, new Vector2(x, y), depth, entry.UpdateDate));
             }
 
-            return points2D.ToArray();
+            return points.ToArray();
         }
 
         private struct MapPoint
         {
             public string Label { get; }
-
-            public Vector2D Position { get; }
-
+            public Vector2 Position { get; }
             public double Depth { get; }
+            public long UpdateDate { get; }
 
-
-            public MapPoint(string label, Vector2D position, double depth)
+            public MapPoint(string label, Vector2 position, double depth, long updateDate)
             {
                 Label = label;
                 Position = position;
                 Depth = depth;
+                UpdateDate = updateDate;
             }
         }
     }

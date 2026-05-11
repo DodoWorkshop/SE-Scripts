@@ -7,9 +7,9 @@ namespace IngameScript
         private const string DetectionDistanceKey = "detectionDistance";
         private const string MapScaleKey = "mapScale";
 
-        public uint DetectionDistance { get; set; } = 10000;
+        public uint DetectionDistance { get; set; } = Program.DefaultDetectionDistance;
 
-        public uint MapScale { get; set; } = 5000;
+        public uint MapScale { get; set; } = Program.DefaultMapScale;
 
         public void Save(MyIni ini)
         {

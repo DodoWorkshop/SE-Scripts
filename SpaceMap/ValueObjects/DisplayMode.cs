@@ -4,6 +4,7 @@
     {
         General,
         Map,
+        Map3D,
         Database,
         Nearby,
         Detection

@@ -115,14 +115,7 @@ namespace IngameScript
                 if (system is IRuntimeSystem)
                 {
                     var runtimeSystem = (IRuntimeSystem)system;
-                    try
-                    {
-                        runtimeSystem.Run(argument, updateSource);
-                    }
-                    catch (Exception e)
-                    {
-                        _program.Echo($"\n{e.Message}");
-                    }
+                    runtimeSystem.Run(argument, updateSource);
                 }
                 else if (system is IAsyncSystem)
                 {
@@ -131,16 +124,7 @@ namespace IngameScript
                     var hasNext = true;
                     while (hasNext)
                     {
-                        try
-                        {
-                            hasNext = coroutine.MoveNext();
-                        }
-                        catch (Exception e)
-                        {
-                            _program.Echo($"\n{e.Message}");
-                            break;
-                        }
-
+                        hasNext = coroutine.MoveNext();
                         yield return true;
                     }
 

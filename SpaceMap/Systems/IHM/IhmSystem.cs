@@ -16,8 +16,9 @@ namespace IngameScript
             _modules = new Dictionary<DisplayMode, IIhmModule>
             {
                 { DisplayMode.General, new GeneralIhmModule(_program) },
-                { DisplayMode.Database, new DatabaseIhmModule() },
                 { DisplayMode.Map, new MapIhmModule(_program) },
+                { DisplayMode.Map3D, new Map3DIhmModule(_program) },
+                { DisplayMode.Database, new DatabaseIhmModule(_program) },
                 { DisplayMode.Detection, new DetectionIhmModule(_program) },
             };
 
@@ -37,7 +38,9 @@ namespace IngameScript
             {
                 foreach (var surface in panel.Surfaces)
                 {
-                    _modules[surface.Mode].InitSurface(panel, surface);
+                    IIhmModule module;
+                    if (_modules.TryGetValue(surface.Mode, out module))
+                        module.InitSurface(panel, surface);
                 }
             }
         }
@@ -49,7 +52,9 @@ namespace IngameScript
             {
                 foreach (var surface in panel.Surfaces)
                 {
-                    _renderQueue.Enqueue(_modules[surface.Mode].RenderTo(panel, surface));
+                    IIhmModule module;
+                    if (_modules.TryGetValue(surface.Mode, out module))
+                        _renderQueue.Enqueue(module.RenderTo(panel, surface));
                 }
             }
 

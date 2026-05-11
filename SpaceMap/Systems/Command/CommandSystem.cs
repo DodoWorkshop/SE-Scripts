@@ -21,7 +21,8 @@ namespace IngameScript
             _commandLine = new MyCommandLine();
             _commands = new ICommand[]
             {
-                new SetMapScaleCommand(_program)
+                new SetMapScaleCommand(_program),
+                new RenameEntryCommand(_program)
             };
         }
 

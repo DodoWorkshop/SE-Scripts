@@ -5,7 +5,7 @@
 ## 📘 Description
 
 Allows the user to create connection groups around a connector
-and control related blocks and displays — for example, to
+and control related blocks and displays - for example, to
 customize a landing pad.
 
 It provides the following features:

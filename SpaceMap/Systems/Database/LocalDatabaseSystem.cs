@@ -35,6 +35,11 @@ namespace IngameScript
                     _eventSink.Produce(new NewMapEntryRegisteredEvent(entry));
                 }
             }
+            else
+            {
+                previousEntry.UpdateDate = DateTime.Now.Ticks;
+                _mapEntryRepository.Save(previousEntry);
+            }
         }
 
         private IMapEntry BuildEntryFromDetectedEntity(MyDetectedEntityInfo detectedEntity)

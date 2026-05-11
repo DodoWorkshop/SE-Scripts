@@ -1,5 +1,91 @@
-﻿R e a d m e
------------
+Space Map - Instructions
+========================
 
-In this file you can include any instructions or other comments you want to have injected onto the 
-top of your final script. You can safely delete this file if you do not want any such comments.
+Detects entities (asteroids, ...) via camera raycast and displays them on configurable screens.
+
+------------------------------------------
+CONFIGURATION
+------------------------------------------
+
+Edit the top of the script to set the operating mode:
+
+  Mode = "Ship"       - Detects entities, maintains a local database.
+                        Can synchronize with a nearby Server.
+  Mode = "Server"     - Receives databases from ships, stores and
+                        merges data. Does not detect on its own.
+  Mode = "ServerShip" - Both detects and acts as a server.
+
+------------------------------------------
+BLOCK NAMING - Tag [SM]
+------------------------------------------
+
+Add the [SM] tag to any block you want SpaceMap to control.
+
+  Camera:
+    Any camera named with [SM] will be used for raycasting.
+    Example: "Camera [SM]"
+
+  Displays (LCD, cockpit screens, etc.):
+    Append [SM] to use default mode assignment, or [SM:<mode>]
+    to pick a specific screen layout.
+
+    Available modes:
+      General   - Overview list of all detected entities with
+                  distance and detection age.
+      Map       - 2D top-down radar circle. Objects are projected
+                  onto the ship's horizontal plane. Depth (up/down)
+                  is shown via a positional offset (isometric hint).
+      Map3D     - 3D perspective view. The horizontal plane appears
+                  as a squished ellipse. Each object is connected to
+                  its position on the plane by a dashed vertical line,
+                  showing its altitude relative to the ship.
+      Database  - Full entry list: name, ID, distance, last detection.
+      Detection - Live raycast info: current target, range, charge.
+
+    Single-surface blocks (basic LCD):
+      [SM]            → General (default)
+      [SM:Map]        → Map mode
+      [SM:Map3D]      → 3D Map mode
+      [SM:Database]   → Database mode
+      [SM:Detection]  → Detection mode
+
+    Multi-surface blocks (cockpits, terminals, ...):
+      [SM]            → Surface 0 = General, 1 = Map, 2 = Database
+      [SM:Auto]       → Same as above
+      [SM:0-Map3D;1-Detection]
+                      → Surface 0 = Map3D, surface 1 = Detection
+                         (any surface index, any mode, separated by ;)
+
+------------------------------------------
+COMMANDS
+------------------------------------------
+
+Run commands via the programmable block terminal argument field,
+or from a button/timer block set to "Run with argument".
+
+  help
+    Display all available commands in the programmable block console.
+
+  map_scale_set <meters>        Alias: mss
+    Set the radar display radius.
+    Example: map_scale_set 10000
+
+  rename <identifier> <newName>  Alias: ren
+    Assign a custom name to a map entry.
+    <identifier> can be:
+      detected (or d) - the entity currently in the detection crosshair
+      <id>            - entity ID (shown in Database mode)
+      <name>          - base name (e.g. AXK-42) or current custom name
+    Example: rename detected "Gold Mine"
+    Example: rename AXK-42 "Gold Mine"
+    Example: rename 123456789 "Iron Rock"
+
+------------------------------------------
+DETECTION AGE
+------------------------------------------
+
+Entries are timestamped at each detection. Displays show:
+  [!]  - Detected less than 60 seconds ago (new entry)
+  2m   - Last seen 2 minutes ago
+  1h   - Last seen 1 hour ago
+  ?    - Detection time unknown (legacy entry)

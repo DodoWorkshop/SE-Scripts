@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
 using Sandbox.ModAPI.Ingame;
 using VRage.Game.GUI.TextPanel;
@@ -31,19 +31,18 @@ namespace IngameScript
             var sb = new StringBuilder();
             sb.AppendLine("< DETECTION >");
 
-            sb.AppendLine("\n[ Info ]");
-            sb.AppendLine($"Detection ray charge: {_detectionDataRepository.RaycastCharge:P1}");
-            sb.AppendLine($"Detection distance: {_userSettingsRepository.DetectionDistance}m");
+            sb.AppendLine("\n[ Sensor ]");
+            sb.AppendLine($"Ray charge: {_detectionDataRepository.RaycastCharge:P1}");
+            sb.AppendLine($"Max range:  {_userSettingsRepository.DetectionDistance}m");
 
             sb.AppendLine("\n[ Detected Entity ]");
             if (_detectionDataRepository.DetectedEntityInfo.HasValue)
             {
                 var result = _detectionDataRepository.DetectedEntityInfo.Value;
 
-                // TODO: manage handled types more clearly
                 if (result.Type != MyDetectedEntityType.Asteroid)
                 {
-                    sb.AppendLine("Database status: Not handled");
+                    sb.AppendLine("Status: Not handled");
                     sb.AppendLine($"Type: {result.Type}");
                 }
                 else
@@ -51,28 +50,30 @@ namespace IngameScript
                     var entry = _mapEntryRepository.GetOneById<IMapEntry>(result.EntityId);
                     if (entry == null)
                     {
-                        sb.AppendLine("Database status: Saving new entry...");
+                        sb.AppendLine("Status: Saving...");
                     }
                     else
                     {
-                        sb.AppendLine("Database status: Saved");
-                        sb.AppendLine($"Type: {entry.GetType().Name}");
-                        sb.AppendLine($"Base name: {entry.BaseName}");
-                        sb.AppendLine($"Custom name: {entry.CustomName}");
+                        var isNew = TimeUtils.IsNew(entry.UpdateDate);
+                        sb.AppendLine($"Status: {(isNew ? "[NEW] " : "")}Known");
+                        sb.AppendLine($"Type:   {entry.GetType().Name}");
+                        sb.AppendLine($"Name:   {entry.BaseName}");
+                        if (!string.IsNullOrEmpty(entry.CustomName))
+                            sb.AppendLine($"Alias:  {entry.CustomName}");
+                        sb.AppendLine($"Seen:   {TimeUtils.FormatAge(entry.UpdateDate)}");
                     }
                 }
 
                 var distance = Vector3D.Distance(result.Position, _program.Me.GetPosition());
-                sb.AppendLine($"Distance: {distance:0}m");
-                sb.AppendLine($"Id: {result.EntityId}");
+                sb.AppendLine($"Dist:   {distance:0}m");
+                sb.AppendLine($"ID:     {result.EntityId}");
             }
             else
             {
-                sb.AppendLine("Noting has been detected");
+                sb.AppendLine("Nothing detected");
             }
 
             surface.Surface.WriteText(sb.ToString());
-
             yield return false;
         }
     }
