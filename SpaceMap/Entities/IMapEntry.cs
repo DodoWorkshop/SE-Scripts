@@ -13,5 +13,7 @@ namespace IngameScript
         Vector3D Position { get; }
 
         long UpdateDate { get; set; }
+
+        long FirstDetectionDate { get; }
     }
 }

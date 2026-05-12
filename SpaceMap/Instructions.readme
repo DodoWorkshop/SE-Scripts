@@ -43,17 +43,17 @@ Add the [SM] tag to any block you want SpaceMap to control.
       Detection - Live raycast info: current target, range, charge.
 
     Single-surface blocks (basic LCD):
-      [SM]            → General (default)
-      [SM:Map]        → Map mode
-      [SM:Map3D]      → 3D Map mode
-      [SM:Database]   → Database mode
-      [SM:Detection]  → Detection mode
+      [SM]            -> General (default)
+      [SM:Map]        -> Map mode
+      [SM:Map3D]      -> 3D Map mode
+      [SM:Database]   -> Database mode
+      [SM:Detection]  -> Detection mode
 
     Multi-surface blocks (cockpits, terminals, ...):
-      [SM]            → Surface 0 = General, 1 = Map, 2 = Database
-      [SM:Auto]       → Same as above
+      [SM]            -> Surface 0 = General, 1 = Map, 2 = Database
+      [SM:Auto]       -> Same as above
       [SM:0-Map3D;1-Detection]
-                      → Surface 0 = Map3D, surface 1 = Detection
+                      -> Surface 0 = Map3D, surface 1 = Detection
                          (any surface index, any mode, separated by ;)
 
 ------------------------------------------
@@ -66,19 +66,37 @@ or from a button/timer block set to "Run with argument".
   help
     Display all available commands in the programmable block console.
 
-  map_scale_set <meters>        Alias: mss
-    Set the radar display radius.
-    Example: map_scale_set 10000
+  map_scale <meters>                    Alias: ms
+    Set the radar display radius (Map and Map3D views).
+    Example: map_scale 5000
 
-  rename <identifier> <newName>  Alias: ren
+  detect_range <meters|+delta|-delta>   Alias: dr
+    Set or adjust the camera detection range.
+    Example: detect_range 8000 | detect_range +2000 | dr -1000
+
+  entry_rename <identifier> <newName>   Alias: ren
     Assign a custom name to a map entry.
     <identifier> can be:
       detected (or d) - the entity currently in the detection crosshair
       <id>            - entity ID (shown in Database mode)
       <name>          - base name (e.g. AXK-42) or current custom name
-    Example: rename detected "Gold Mine"
-    Example: rename AXK-42 "Gold Mine"
-    Example: rename 123456789 "Iron Rock"
+    Example: entry_rename detected "Gold Mine"
+    Example: ren AXK-42 "Gold Mine"
+    Example: ren 123456789 "Iron Rock"
+
+  db_scroll (up|down|<n>)               Alias: dbs
+    Scroll the database list view. up/down moves by 5 entries.
+    Example: db_scroll down | dbs up | dbs -3
+
+  db_sort <mode>                        Alias: dbso
+    Sort the database list. Modes: distance, name, age, new
+    Example: db_sort name | dbso distance
+
+  disp_next [mode]                      Alias: dn
+    Cycle the display mode on screens tagged [SM:Cycle],
+    or jump to a specific mode.
+    Modes: General, Map, Map3D, Database, Detection
+    Example: disp_next | dn Map3D
 
 ------------------------------------------
 DETECTION AGE

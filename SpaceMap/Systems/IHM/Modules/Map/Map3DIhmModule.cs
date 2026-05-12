@@ -45,9 +45,29 @@ namespace IngameScript
             var scaleFactor = new Vector2(viewport.Size.X / BaseRatio.X, viewport.Size.Y / BaseRatio.Y);
             var uniformScale = Math.Min(scaleFactor.X, scaleFactor.Y);
 
+            var headerH = 30f * uniformScale;
+            var fgColor = surface.Surface.ScriptForegroundColor;
+
+            // Header
+            frame.Add(new MySprite
+            {
+                Type = SpriteType.TEXTURE, Data = "SquareSimple",
+                Position = new Vector2(viewport.Center.X, viewport.Y + headerH / 2),
+                Size = new Vector2(viewport.Width, headerH),
+                Color = fgColor * 0.12f, Alignment = TextAlignment.CENTER
+            });
+            frame.Add(new MySprite
+            {
+                Type = SpriteType.TEXT, Data = "MAP 3D",
+                Color = fgColor,
+                Position = new Vector2(viewport.X + 18f * uniformScale, viewport.Y + headerH / 2 - 10f * uniformScale),
+                Alignment = TextAlignment.LEFT, RotationOrScale = uniformScale * 1.1f
+            });
+
             var uniformMapPadding = uniformScale * MapPadding;
-            var mapWidth = Math.Min(viewport.Size.X, viewport.Size.Y) - uniformMapPadding * 2;
-            var mapCenter = viewport.Center;
+            var mapAreaH = viewport.Size.Y - headerH;
+            var mapWidth = Math.Min(viewport.Size.X, mapAreaH) - uniformMapPadding * 2;
+            var mapCenter = new Vector2(viewport.Center.X, viewport.Y + headerH + mapAreaH / 2f);
             var scale = mapWidth / displayDiameter;
 
             // ---- Horizontal plane: the main ellipse ----
@@ -100,7 +120,6 @@ namespace IngameScript
             yield return true;
 
             var breaker = 0;
-            var fgColor = surface.Surface.ScriptForegroundColor;
             var newEntryColor = new Color(80, 220, 140);
             var shadowColor = fgColor * 0.35f;
             var lineColor = fgColor * 0.5f;
@@ -116,7 +135,7 @@ namespace IngameScript
                 // Depth goes up on screen for positive (above ship)
                 var actualPos = new Vector2(planeX, planeY - depthPixels);
 
-                var isNew = TimeUtils.IsNew(point.UpdateDate);
+                var isNew = TimeUtils.IsNew(point.FirstDetectionDate);
                 var dotColor = isNew ? newEntryColor : fgColor;
 
                 // Dashed vertical line: from plane projection to actual 3D position
@@ -186,8 +205,8 @@ namespace IngameScript
             {
                 Type = SpriteType.TEXT,
                 Data = $"{points.Length} detected",
-                Color = fgColor,
-                Position = new Vector2(viewport.X + 20, viewport.Y + 20),
+                Color = fgColor * 0.6f,
+                Position = new Vector2(viewport.X + 20, viewport.Y + headerH + 8f * uniformScale),
                 Alignment = TextAlignment.LEFT,
                 RotationOrScale = uniformScale
             });
@@ -195,7 +214,7 @@ namespace IngameScript
             {
                 Type = SpriteType.TEXT,
                 Data = $"Scale: {displayDiameter}m",
-                Color = fgColor,
+                Color = fgColor * 0.6f,
                 Position = new Vector2(viewport.X + 20, viewport.Bottom - 50),
                 Alignment = TextAlignment.LEFT,
                 RotationOrScale = uniformScale
@@ -248,7 +267,8 @@ namespace IngameScript
                     -Vector3D.Dot(relative, right),
                     Vector3D.Dot(relative, forward),
                     Vector3D.Dot(relative, up),
-                    entry.UpdateDate
+                    entry.UpdateDate,
+                    entry.FirstDetectionDate
                 ));
             }
             return result.ToArray();
@@ -261,14 +281,16 @@ namespace IngameScript
             public double Forward { get; }
             public double Depth { get; }
             public long UpdateDate { get; }
+            public long FirstDetectionDate { get; }
 
-            public MapPoint(string label, double right, double forward, double depth, long updateDate)
+            public MapPoint(string label, double right, double forward, double depth, long updateDate, long firstDetectionDate)
             {
                 Label = label;
                 Right = right;
                 Forward = forward;
                 Depth = depth;
                 UpdateDate = updateDate;
+                FirstDetectionDate = firstDetectionDate;
             }
         }
     }

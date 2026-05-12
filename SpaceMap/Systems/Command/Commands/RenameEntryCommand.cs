@@ -14,7 +14,7 @@ namespace IngameScript
             _detectionDataRepository = program.Container.GetItem<IDetectionDataRepository>();
         }
 
-        public string[] Names => new[] { "rename", "ren" };
+        public string[] Names => new[] { "entry_rename", "ren" };
 
         public void Execute(MyCommandLine commandLine)
         {

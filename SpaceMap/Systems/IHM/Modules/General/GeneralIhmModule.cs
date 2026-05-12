@@ -42,7 +42,7 @@ namespace IngameScript
                     : asteroid.CustomName;
                 var distance = (long)Vector3D.Distance(asteroid.Position, selfPosition);
                 var age = TimeUtils.FormatAge(asteroid.UpdateDate, shortFormat: true);
-                var newFlag = TimeUtils.IsNew(asteroid.UpdateDate) ? "[!] " : "    ";
+                var newFlag = TimeUtils.IsNew(asteroid.FirstDetectionDate) ? "[!] " : "    ";
                 sb.AppendLine($"{newFlag}{name} ({distance}m, {age})");
             }
 

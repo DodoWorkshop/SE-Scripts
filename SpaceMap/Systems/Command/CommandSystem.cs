@@ -22,7 +22,11 @@ namespace IngameScript
             _commands = new ICommand[]
             {
                 new SetMapScaleCommand(_program),
-                new RenameEntryCommand(_program)
+                new SetDetectionRangeCommand(_program),
+                new RenameEntryCommand(_program),
+                new DatabaseScrollCommand(_program),
+                new DatabaseSortCommand(_program),
+                new DispNextCommand(_program)
             };
         }
 
@@ -67,11 +71,11 @@ namespace IngameScript
         private void PrintUsage()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("--- Space Map Script ---");
-            sb.AppendLine("TODO\n");
+            sb.AppendLine("--- Space Map ---");
+            sb.AppendLine("Run any command below as the script argument.\n");
 
             sb.AppendLine("----------");
-            sb.AppendLine("Usage: [commandName] [arguments]*\n");
+            sb.AppendLine("Usage: <commandName> <arguments>*\n");
             sb.AppendLine("Available commands:\n");
 
             foreach (var command in _commands)

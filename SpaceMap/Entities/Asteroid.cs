@@ -14,11 +14,14 @@ namespace IngameScript
 
         public long UpdateDate { get; set; }
 
-        public Asteroid(long id, string baseName, Vector3D position)
+        public long FirstDetectionDate { get; }
+
+        public Asteroid(long id, string baseName, Vector3D position, long firstDetectionDate = 0)
         {
             Id = id;
             BaseName = baseName;
             Position = position;
+            FirstDetectionDate = firstDetectionDate;
         }
     }
 }

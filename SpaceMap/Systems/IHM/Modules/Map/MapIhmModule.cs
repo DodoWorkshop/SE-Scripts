@@ -41,10 +41,31 @@ namespace IngameScript
             var scaleFactor = new Vector2(viewport.Size.X / BaseRatio.X, viewport.Size.Y / BaseRatio.Y);
             var uniformScale = Math.Min(scaleFactor.X, scaleFactor.Y);
 
+            var headerH = 30f * uniformScale;
+            var fg = surface.Surface.ScriptForegroundColor;;
+
+            // Header
+            frame.Add(new MySprite
+            {
+                Type = SpriteType.TEXTURE, Data = "SquareSimple",
+                Position = new Vector2(viewport.Center.X, viewport.Y + headerH / 2),
+                Size = new Vector2(viewport.Width, headerH),
+                Color = fg * 0.12f, Alignment = TextAlignment.CENTER
+            });
+            frame.Add(new MySprite
+            {
+                Type = SpriteType.TEXT, Data = "MAP",
+                Color = fg,
+                Position = new Vector2(viewport.X + 18f * uniformScale, viewport.Y + headerH / 2 - 10f * uniformScale),
+                Alignment = TextAlignment.LEFT, RotationOrScale = uniformScale * 1.1f
+            });
+
             var uniformMapPadding = uniformScale * MapPadding;
-            var minViewportAxis = Math.Min(viewport.Size.X, viewport.Size.Y);
+            var mapAreaH = viewport.Size.Y - headerH;
+            var minViewportAxis = Math.Min(viewport.Size.X, mapAreaH);
             var mapSize = new Vector2(minViewportAxis - uniformMapPadding * 2, minViewportAxis - uniformMapPadding * 2);
-            var mapFrame = new RectangleF(viewport.Center - mapSize / 2, mapSize);
+            var mapAreaCenter = new Vector2(viewport.Center.X, viewport.Y + headerH + mapAreaH / 2f);
+            var mapFrame = new RectangleF(mapAreaCenter - mapSize / 2, mapSize);
 
             // Map border
             frame.Add(new MySprite
@@ -53,7 +74,7 @@ namespace IngameScript
                 Data = "CircleHollow",
                 Position = mapFrame.Center,
                 Size = mapFrame.Size,
-                Color = surface.Surface.ScriptForegroundColor,
+                Color = fg,
                 Alignment = TextAlignment.CENTER
             });
 
@@ -64,7 +85,7 @@ namespace IngameScript
                 Data = "Circle",
                 Position = mapFrame.Center,
                 Size = Vector2.One * 15 * uniformScale,
-                Color = surface.Surface.ScriptForegroundColor,
+                Color = fg,
                 Alignment = TextAlignment.CENTER
             });
 
@@ -93,8 +114,8 @@ namespace IngameScript
                     (float)(point.Position.Y * mapFactor.Y) - perspectiveShift
                 );
 
-                var isNew = TimeUtils.IsNew(point.UpdateDate);
-                var dotColor = isNew ? newEntryColor : surface.Surface.ScriptForegroundColor;
+                var isNew = TimeUtils.IsNew(point.FirstDetectionDate);
+                var dotColor = isNew ? newEntryColor : fg;
                 var dotSize = Math.Max(8f, 18 * uniformScale + 8 * (float)(Math.Abs(point.Depth) / displayDiameter));
 
                 frame.Add(new MySprite
@@ -125,7 +146,7 @@ namespace IngameScript
                 {
                     Type = SpriteType.TEXT,
                     Data = $"{point.Label} ({ageStr})",
-                    Color = surface.Surface.ScriptForegroundColor,
+                    Color = fg,
                     Position = pos + new Vector2(0, -38 * uniformScale),
                     Alignment = TextAlignment.CENTER,
                     RotationOrScale = uniformScale * 0.8f
@@ -145,8 +166,8 @@ namespace IngameScript
             {
                 Type = SpriteType.TEXT,
                 Data = $"{points.Length} detected",
-                Color = surface.Surface.ScriptForegroundColor,
-                Position = new Vector2(viewport.X + 20, viewport.Position.Y + 20),
+                Color = fg * 0.6f,
+                Position = new Vector2(viewport.X + 20, viewport.Y + headerH + 8f * uniformScale),
                 Alignment = TextAlignment.LEFT,
                 RotationOrScale = uniformScale
             });
@@ -155,7 +176,7 @@ namespace IngameScript
             {
                 Type = SpriteType.TEXT,
                 Data = $"Scale: {displayDiameter}m",
-                Color = surface.Surface.ScriptForegroundColor,
+                Color = fg * 0.6f,
                 Position = new Vector2(viewport.X + 20, viewport.Bottom - 50),
                 Alignment = TextAlignment.LEFT,
                 RotationOrScale = uniformScale
@@ -182,7 +203,7 @@ namespace IngameScript
                 var depth = Vector3D.Dot(relative, up);
 
                 var label = string.IsNullOrEmpty(entry.CustomName) ? entry.BaseName : entry.CustomName;
-                points.Add(new MapPoint(label, new Vector2(x, y), depth, entry.UpdateDate));
+                points.Add(new MapPoint(label, new Vector2(x, y), depth, entry.UpdateDate, entry.FirstDetectionDate));
             }
 
             return points.ToArray();
@@ -194,13 +215,15 @@ namespace IngameScript
             public Vector2 Position { get; }
             public double Depth { get; }
             public long UpdateDate { get; }
+            public long FirstDetectionDate { get; }
 
-            public MapPoint(string label, Vector2 position, double depth, long updateDate)
+            public MapPoint(string label, Vector2 position, double depth, long updateDate, long firstDetectionDate)
             {
                 Label = label;
                 Position = position;
                 Depth = depth;
                 UpdateDate = updateDate;
+                FirstDetectionDate = firstDetectionDate;
             }
         }
     }

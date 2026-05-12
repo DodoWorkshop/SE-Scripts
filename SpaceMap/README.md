@@ -53,6 +53,7 @@ LCD Panel [SM:Map]        → 2D radar map
 LCD Panel [SM:Map3D]      → 3D perspective map
 LCD Panel [SM:Database]   → Full entry list
 LCD Panel [SM:Detection]  → Live raycast info
+LCD Panel [SM:Cycle]      → Cycles via disp_next command
 ```
 
 **Multi-surface blocks** (cockpits, terminals, ...):
@@ -92,22 +93,41 @@ Live raycast info: current target, distance, ray charge percentage, and detectio
 
 Run via the programmable block's argument field, a button, or a timer block.
 
+Commands follow a `category_action` naming pattern. All have short aliases for button/timer use.
+
 ```
 help
   List all available commands.
 
-map_scale_set <meters>          alias: mss
+map_scale <meters>              alias: ms
   Set the map display radius.
-  Example: map_scale_set 10000
+  Example: map_scale 10000
 
-rename <identifier> <newName>   alias: ren
+entry_rename <id> <newName>     alias: ren
   Assign a custom name to a map entry.
   Identifier can be:
     detected (or d) — the entity currently in the detection crosshair
     <id>            — numeric entity ID (shown in Database mode)
     <name>          — base name (e.g. AXK-42) or existing custom name
-  Example: rename detected "Gold Mine"
-  Example: rename AXK-42 "Iron Cache"
+  Example: entry_rename detected "Gold Mine"
+  Example: ren AXK-42 "Iron Cache"
+
+disp_next [mode]                alias: dn
+  Cycle the display mode on screens tagged [SM:Cycle], or jump to a specific mode.
+  Modes: General, Map, Map3D, Database, Detection
+  Example: disp_next
+  Example: disp_next Map3D
+
+db_scroll (up|down|<n>)         alias: dbs
+  Scroll the Database view. up/down moves by 5 entries; provide a number for a specific delta.
+  Example: db_scroll down
+  Example: dbs -3
+
+db_sort <mode>                  alias: dbso
+  Set the sort order for the Database view. Resets scroll to the top.
+  Modes: distance, name, age, new
+  Example: db_sort name
+  Example: dbso distance
 ```
 
 ## Detection Age Indicators

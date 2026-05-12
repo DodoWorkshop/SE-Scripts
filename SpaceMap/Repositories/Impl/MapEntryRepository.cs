@@ -11,6 +11,8 @@ namespace IngameScript
         private readonly Dictionary<long, IMapEntry> _mapEntries = new Dictionary<long, IMapEntry>();
 
         private const string MapEntriesSaveKey = "mapEntries";
+        private const string MapEntriesSectionKey = "MapEntryRepository";
+        private const char Sep = '|';
 
         public void Save(IMapEntry entry)
         {
@@ -79,33 +81,35 @@ namespace IngameScript
             var lines = _mapEntries.Values
                 .Select(entry =>
                 {
+                    var inv = System.Globalization.CultureInfo.InvariantCulture;
                     var data = new[]
                     {
                         entry.GetType().Name,
-                        entry.Id.ToString(),
+                        entry.Id.ToString(inv),
                         entry.BaseName,
-                        entry.CustomName,
-                        entry.Position.X.ToString(),
-                        entry.Position.Y.ToString(),
-                        entry.Position.Z.ToString(),
-                        entry.UpdateDate.ToString()
+                        entry.CustomName ?? "",
+                        entry.Position.X.ToString(inv),
+                        entry.Position.Y.ToString(inv),
+                        entry.Position.Z.ToString(inv),
+                        entry.UpdateDate.ToString(inv),
+                        entry.FirstDetectionDate.ToString(inv)
                     };
 
-                    return string.Join(",", data);
+                    return string.Join(Sep.ToString(), data);
                 })
                 .ToArray();
 
             var mapData = string.Join("\n", lines);
 
-            ini.AddSection(GetType().Name);
-            ini.Set(GetType().Name, MapEntriesSaveKey, mapData);
+            ini.AddSection(MapEntriesSectionKey);
+            ini.Set(MapEntriesSectionKey, MapEntriesSaveKey, mapData);
         }
 
         public void Load(MyIni ini)
         {
-            if (!ini.ContainsKey(GetType().Name, MapEntriesSaveKey)) return;
+            if (!ini.ContainsKey(MapEntriesSectionKey, MapEntriesSaveKey)) return;
 
-            var mapData = ini.Get(GetType().Name, MapEntriesSaveKey).ToString();
+            var mapData = ini.Get(MapEntriesSectionKey, MapEntriesSaveKey).ToString();
 
             if (string.IsNullOrWhiteSpace(mapData)) return;
 
@@ -121,27 +125,30 @@ namespace IngameScript
 
         private IMapEntry LineToEntry(string line)
         {
-            var split = line.Split(',');
+            // Backward compat: old saves used ',' as separator
+            var split = line.IndexOf(Sep) >= 0 ? line.Split(Sep) : line.Split(',');
             var type = split[0];
+            var inv = System.Globalization.CultureInfo.InvariantCulture;
 
-            switch (split[0])
+            switch (type)
             {
                 case "Asteroid":
                     return new Asteroid(
-                        long.Parse(split[1]),
+                        long.Parse(split[1], inv),
                         split[2],
                         new Vector3D(
-                            double.Parse(split[4]),
-                            double.Parse(split[5]),
-                            double.Parse(split[6])
-                        )
+                            double.Parse(split[4], inv),
+                            double.Parse(split[5], inv),
+                            double.Parse(split[6], inv)
+                        ),
+                        split.Length > 8 ? long.Parse(split[8], inv) : 0L
                     )
                     {
                         CustomName = split[3],
-                        UpdateDate = long.Parse(split[7])
+                        UpdateDate = long.Parse(split[7], inv)
                     };
                 default:
-                    throw new Exception($"Failed to read line entry: Unknown type {type}");
+                    throw new Exception($"Failed to read line entry: Unknown type '{type}'");
             }
         }
     }

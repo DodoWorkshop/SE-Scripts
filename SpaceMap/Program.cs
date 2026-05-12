@@ -66,6 +66,8 @@ namespace IngameScript
             Container.RegisterItem<IMapEntryRepository>(new MapEntryRepository());
             Container.RegisterItem<IUserSettingsRepository>(new UserSettingsRepository());
             Container.RegisterItem<IDetectionDataRepository>(new DetectionDataRepository());
+            Container.RegisterItem<DatabaseViewSettings>(new DatabaseViewSettings());
+            Container.RegisterItem<DisplayCycleSettings>(new DisplayCycleSettings());
 
             _repositoryManager.LoadStorage(Storage);
         }
@@ -105,7 +107,9 @@ namespace IngameScript
                     break;
             }
 
-            _systemManager.RegisterSystem(SystemGroups.Render, new IhmSystem(this));
+            var ihmSystem = new IhmSystem(this);
+            Container.RegisterItem<IhmSystem>(ihmSystem);
+            _systemManager.RegisterSystem(SystemGroups.Render, ihmSystem);
             _systemManager.RegisterSystem(SystemGroups.Logic, new BlocDetectionTimer(this));
             _systemManager.RegisterSystem(SystemGroups.Command, new CommandSystem(this));
 

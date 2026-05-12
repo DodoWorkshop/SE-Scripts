@@ -11,7 +11,7 @@ namespace IngameScript
             _userSettingsRepository = program.Container.GetItem<IUserSettingsRepository>();
         }
 
-        public string[] Names => new[] { "map_scale_set", "mss" };
+        public string[] Names => new[] { "map_scale", "ms" };
 
         public void Execute(MyCommandLine commandLine)
         {
@@ -21,7 +21,9 @@ namespace IngameScript
 
         public string GetUsage()
         {
-            return "TODO";
+            return "map_scale <meters>  alias: ms\n" +
+                   "  Set the radar display radius (Map and Map3D views).\n" +
+                   "  Example: map_scale 5000";
         }
     }
 }

@@ -2,11 +2,15 @@
 {
     public enum DisplayMode
     {
+        #region mdk preserve
+
         General,
         Map,
         Map3D,
         Database,
-        Nearby,
-        Detection
+        Detection,
+        Cycle
+
+        #endregion
     }
 }

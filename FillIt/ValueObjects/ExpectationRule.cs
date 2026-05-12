@@ -4,9 +4,13 @@ namespace IngameScript
 {
     public enum ExpectationRule
     {
+        #region mdk preserve
+
         Exact,
         Minimum,
         Maximum
+
+        #endregion
     }
 
     public static class ExpectationRuleExtensions

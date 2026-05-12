@@ -12,7 +12,7 @@ namespace IngameScript
             if (updateDateTicks == 0) return "?";
             var ageSeconds = (DateTime.Now.Ticks - updateDateTicks) / TicksPerSecond;
             if (ageSeconds < 0) return "?";
-            if (ageSeconds < NewEntryThresholdSeconds) return "NEW";
+            if (ageSeconds < NewEntryThresholdSeconds) return "NOW";
             var suffix = shortFormat ? "" : " ago";
             if (ageSeconds < 3600) return $"{ageSeconds / 60}m{suffix}";
             return $"{ageSeconds / 3600}h{suffix}";
