@@ -14,12 +14,12 @@ namespace IngameScript
 
         public string[] Names => new[] { "detect_range", "dr" };
 
-        public void Execute(MyCommandLine commandLine)
+        public string Execute(MyCommandLine commandLine)
         {
-            if (commandLine.ArgumentCount < 2)
+            if (commandLine.Items.Count < 2)
                 throw new Exception("A value is required. Example: detect_range 8000");
 
-            var arg = commandLine.Argument(1);
+            var arg = commandLine.Items[1];
             if (arg.Length > 0 && (arg[0] == '+' || arg[0] == '-'))
             {
                 var delta = int.Parse(arg);
@@ -30,6 +30,8 @@ namespace IngameScript
             {
                 _userSettingsRepository.DetectionDistance = uint.Parse(arg);
             }
+
+            return $"Detect range: {_userSettingsRepository.DetectionDistance}m";
         }
 
         public string GetUsage()

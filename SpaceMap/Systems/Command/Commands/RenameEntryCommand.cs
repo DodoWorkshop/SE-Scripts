@@ -16,10 +16,10 @@ namespace IngameScript
 
         public string[] Names => new[] { "entry_rename", "ren" };
 
-        public void Execute(MyCommandLine commandLine)
+        public string Execute(MyCommandLine commandLine)
         {
             if (commandLine.ArgumentCount < 3)
-                throw new Exception("Usage: rename <id|name|detected> <newName>");
+                throw new Exception("Usage: entry_rename <id|name|detected> <newName>");
 
             var identifier = commandLine.Argument(1);
             var newName = commandLine.Argument(2);
@@ -56,12 +56,13 @@ namespace IngameScript
             }
 
             entry.CustomName = newName;
+            return $"{entry.BaseName} -> \"{newName}\"";
         }
 
         public string GetUsage()
         {
-            return "rename <id|baseName|customName|detected> <newName>  |  Alias: ren\n" +
-                   "  detected (or d): rename the entity currently in the detection crosshair.";
+            return "entry_rename <id|name|detected> <newName>  alias: ren\n" +
+                   "  Rename a map entry by id, name, or 'detected' (current scan).";
         }
     }
 }

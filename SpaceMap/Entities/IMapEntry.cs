@@ -4,6 +4,8 @@ namespace IngameScript
 {
     public interface IMapEntry
     {
+        string TypeKey { get; }
+
         long Id { get; }
 
         string BaseName { get; }

@@ -18,9 +18,9 @@ namespace IngameScript
 
         public string[] Names => new[] { "db_scroll", "dbs" };
 
-        public void Execute(MyCommandLine commandLine)
+        public string Execute(MyCommandLine commandLine)
         {
-            var arg = commandLine.ArgumentCount > 1 ? commandLine.Argument(1) : "down";
+            var arg = commandLine.Items.Count > 1 ? commandLine.Items[1] : "down";
 
             int delta;
             if (string.Equals(arg, "up", StringComparison.OrdinalIgnoreCase))
@@ -32,6 +32,7 @@ namespace IngameScript
 
             var total = _mapEntryRepository.GetAll<IMapEntry>().Count;
             _viewSettings.ScrollOffset = Math.Max(0, Math.Min(_viewSettings.ScrollOffset + delta, Math.Max(0, total - 1)));
+            return null;
         }
 
         public string GetUsage()

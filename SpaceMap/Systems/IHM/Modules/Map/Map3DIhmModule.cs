@@ -133,7 +133,7 @@ namespace IngameScript
 
                 var planePos = new Vector2(planeX, planeY);
                 // Depth goes up on screen for positive (above ship)
-                var actualPos = new Vector2(planeX, planeY - depthPixels);
+                var actualPos = new Vector2(planeX, planeY + depthPixels);
 
                 var isNew = TimeUtils.IsNew(point.FirstDetectionDate);
                 var dotColor = isNew ? newEntryColor : fgColor;

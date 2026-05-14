@@ -14,13 +14,14 @@ namespace IngameScript
 
         public string[] Names => new[] { "db_sort", "dbso" };
 
-        public void Execute(MyCommandLine commandLine)
+        public string Execute(MyCommandLine commandLine)
         {
             if (commandLine.ArgumentCount < 2)
                 throw new Exception("Sort mode required. Available: distance, name, age, new");
 
             _viewSettings.SortMode = (DatabaseSortMode)Enum.Parse(typeof(DatabaseSortMode), commandLine.Argument(1), true);
             _viewSettings.ScrollOffset = 0;
+            return $"Sort: {_viewSettings.SortMode}";
         }
 
         public string GetUsage()

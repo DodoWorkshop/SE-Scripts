@@ -9,6 +9,7 @@
         Map3D,
         Database,
         Detection,
+        Help,
         Cycle
 
         #endregion

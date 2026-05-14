@@ -16,7 +16,7 @@ namespace IngameScript
 
         public string[] Names => new[] { "disp_next", "dn" };
 
-        public void Execute(MyCommandLine commandLine)
+        public string Execute(MyCommandLine commandLine)
         {
             if (commandLine.ArgumentCount > 1)
             {
@@ -32,13 +32,14 @@ namespace IngameScript
             }
 
             _ihmSystem.RefreshCycleSurfaces();
+            return $"Display: {_cycleSettings.CurrentMode}";
         }
 
         public string GetUsage()
         {
             return "disp_next [mode]  alias: dn\n" +
                    "  Cycle the display mode on screens tagged [SM:Cycle], or jump to a specific mode.\n" +
-                   "  Modes: General, Map, Map3D, Database, Detection\n" +
+                   "  Modes: General, Map, Map3D, Database, Detection, Help, Cycle\n" +
                    "  Example: disp_next | disp_next Map3D";
         }
     }

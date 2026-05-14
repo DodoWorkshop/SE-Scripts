@@ -22,6 +22,7 @@ namespace IngameScript
                 { DisplayMode.Map3D,     new Map3DIhmModule(_program) },
                 { DisplayMode.Database,  new DatabaseIhmModule(_program) },
                 { DisplayMode.Detection, new DetectionIhmModule(_program) },
+                { DisplayMode.Help,      new HelpIhmModule(_program) },
             };
 
             var eventStream = program.Container.GetItem<IEventStream<ISpaceMapEvent>>();

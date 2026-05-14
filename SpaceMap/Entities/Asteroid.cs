@@ -4,6 +4,8 @@ namespace IngameScript
 {
     public class Asteroid : IMapEntry
     {
+        public string TypeKey => "Asteroid";
+
         public long Id { get; }
 
         public string BaseName { get; }

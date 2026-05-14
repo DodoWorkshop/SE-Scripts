@@ -84,7 +84,7 @@ namespace IngameScript
                     var inv = System.Globalization.CultureInfo.InvariantCulture;
                     var data = new[]
                     {
-                        entry.GetType().Name,
+                        entry.TypeKey,
                         entry.Id.ToString(inv),
                         entry.BaseName,
                         entry.CustomName ?? "",

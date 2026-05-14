@@ -110,8 +110,8 @@ namespace IngameScript
                 var perspectiveShift = depthInScreen * Program.MapPerspectiveStrength;
 
                 var pos = mapInnerFrame.Center + new Vector2(
-                    (float)(point.Position.X * mapFactor.X) + perspectiveShift * 0.5f,
-                    (float)(point.Position.Y * mapFactor.Y) - perspectiveShift
+                    (float)(point.Position.X * mapFactor.X) - perspectiveShift * 0.5f,
+                    (float)(point.Position.Y * mapFactor.Y) + perspectiveShift
                 );
 
                 var isNew = TimeUtils.IsNew(point.FirstDetectionDate);

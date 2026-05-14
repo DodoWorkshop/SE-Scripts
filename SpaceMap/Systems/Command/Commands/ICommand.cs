@@ -6,7 +6,7 @@ namespace IngameScript
     {
         string[] Names { get; }
 
-        void Execute(MyCommandLine commandLine);
+        string Execute(MyCommandLine commandLine);
 
         string GetUsage();
     }

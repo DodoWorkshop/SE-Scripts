@@ -39,8 +39,9 @@ Add the [SM] tag to any block you want SpaceMap to control.
                   as a squished ellipse. Each object is connected to
                   its position on the plane by a dashed vertical line,
                   showing its altitude relative to the ship.
-      Database  - Full entry list: name, ID, distance, last detection.
+      Database  - Full entry list: name, distance, detection age.
       Detection - Live raycast info: current target, range, charge.
+      Help      - Quick reference of all available commands.
 
     Single-surface blocks (basic LCD):
       [SM]            -> General (default)
@@ -48,6 +49,7 @@ Add the [SM] tag to any block you want SpaceMap to control.
       [SM:Map3D]      -> 3D Map mode
       [SM:Database]   -> Database mode
       [SM:Detection]  -> Detection mode
+      [SM:Help]       -> Help mode
 
     Multi-surface blocks (cockpits, terminals, ...):
       [SM]            -> Surface 0 = General, 1 = Map, 2 = Database
@@ -62,9 +64,7 @@ COMMANDS
 
 Run commands via the programmable block terminal argument field,
 or from a button/timer block set to "Run with argument".
-
-  help
-    Display all available commands in the programmable block console.
+Use a screen tagged [SM:Help] for the in-game command reference.
 
   map_scale <meters>                    Alias: ms
     Set the radar display radius (Map and Map3D views).

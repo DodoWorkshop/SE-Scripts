@@ -19,9 +19,9 @@ namespace IngameScript
     // [ Detection ]
     // Interval (in ticks) between block discovery scans. Lower = more responsive, higher = better perf.
     public const int SearchBlockInterval = 100;
-    // Default camera raycast range in meters (changeable at runtime with: map_scale_set <value>).
+    // Default camera raycast range in meters (changeable at runtime with: detect_range <value>).
     public const uint DefaultDetectionDistance = 10000;
-    // Default map display radius in meters (changeable at runtime with: mss <value>).
+    // Default map display radius in meters (changeable at runtime with: map_scale <value>).
     public const uint DefaultMapScale = 5000;
 
     // [ Database ]
@@ -45,7 +45,10 @@ namespace IngameScript
 
         private readonly ISystemManager _systemManager;
         private readonly IRepositoryManager _repositoryManager;
+        private readonly CommandFeedback _commandFeedback;
         private string _errorLog = null;
+        private int _spinnerState;
+        private static readonly char[] Spinner = { '|', '/', '-', '\\' };
 
         public Program()
         {
@@ -58,6 +61,8 @@ namespace IngameScript
             BuildCommunicationLayer();
             BuildSystems();
 
+            _commandFeedback = Container.GetItem<CommandFeedback>();
+
             Runtime.UpdateFrequency = UpdateFrequency.Update100 | UpdateFrequency.Update10;
         }
 
@@ -68,6 +73,7 @@ namespace IngameScript
             Container.RegisterItem<IDetectionDataRepository>(new DetectionDataRepository());
             Container.RegisterItem<DatabaseViewSettings>(new DatabaseViewSettings());
             Container.RegisterItem<DisplayCycleSettings>(new DisplayCycleSettings());
+            Container.RegisterItem<CommandFeedback>(new CommandFeedback());
 
             _repositoryManager.LoadStorage(Storage);
         }
@@ -111,7 +117,10 @@ namespace IngameScript
             Container.RegisterItem<IhmSystem>(ihmSystem);
             _systemManager.RegisterSystem(SystemGroups.Render, ihmSystem);
             _systemManager.RegisterSystem(SystemGroups.Logic, new BlocDetectionTimer(this));
-            _systemManager.RegisterSystem(SystemGroups.Command, new CommandSystem(this));
+
+            var commandSystem = new CommandSystem(this);
+            Container.RegisterItem<CommandSystem>(commandSystem);
+            _systemManager.RegisterSystem(SystemGroups.Command, commandSystem);
 
             // Set Update types
             _systemManager.SetGroupUpdateFrequency(SystemGroups.Logic, UpdateFrequency.Update10);
@@ -132,6 +141,9 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            _spinnerState = (_spinnerState + 1) % Spinner.Length;
+            _commandFeedback.Tick();
+
             try
             {
                 _systemManager.RunSystems(argument, updateSource);
@@ -139,9 +151,15 @@ namespace IngameScript
             catch (Exception e)
             {
                 _errorLog = BuildErrorLog(e);
-                Echo(_errorLog);
                 Me.CustomData = _errorLog;
+                Echo(_errorLog);
+                return;
             }
+
+            var echo = "Running " + Spinner[_spinnerState];
+            if (_commandFeedback.HasMessage)
+                echo += "\n\n" + (_commandFeedback.IsError ? "ERR - " : "OK - ") + _commandFeedback.Message;
+            Echo(echo);
         }
 
         private string BuildErrorLog(Exception e)
