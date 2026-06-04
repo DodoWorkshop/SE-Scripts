@@ -17,12 +17,12 @@ namespace IngameScript
             _cycleSettings = program.Container.GetItem<DisplayCycleSettings>();
             _modules = new Dictionary<DisplayMode, IIhmModule>
             {
-                { DisplayMode.General,   new GeneralIhmModule(_program) },
                 { DisplayMode.Map,       new MapIhmModule(_program) },
                 { DisplayMode.Map3D,     new Map3DIhmModule(_program) },
                 { DisplayMode.Database,  new DatabaseIhmModule(_program) },
                 { DisplayMode.Detection, new DetectionIhmModule(_program) },
                 { DisplayMode.Help,      new HelpIhmModule(_program) },
+                { DisplayMode.Sync,      new SyncIhmModule(_program) },
             };
 
             var eventStream = program.Container.GetItem<IEventStream<ISpaceMapEvent>>();

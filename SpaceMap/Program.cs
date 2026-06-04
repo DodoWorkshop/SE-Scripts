@@ -16,6 +16,12 @@ namespace IngameScript
     //   ServerShip - Both detects and acts as a server.
     public const string Mode = "Ship";
 
+    // [ Sync ]
+    // IGC channel used for ship↔server database synchronisation.
+    public const string SyncChannel = "SM_SYNC";
+    // Interval (in Update10 ticks, ~6/s) between ship database broadcasts. 360 ~ 60s.
+    public const int SyncBroadcastInterval = 360;
+
     // [ Detection ]
     // Interval (in ticks) between block discovery scans. Lower = more responsive, higher = better perf.
     public const int SearchBlockInterval = 100;
@@ -98,18 +104,23 @@ namespace IngameScript
                                     string.Join(", ", Enum.GetNames(typeof(ScriptMode))));
             }
 
+            Container.RegisterItem<SyncStats>(new SyncStats(scriptMode));
+
             switch (scriptMode)
             {
                 case ScriptMode.Ship:
                     _systemManager.RegisterSystem(SystemGroups.Logic, new ShipSystem(this));
                     _systemManager.RegisterSystem(SystemGroups.Logic, new LocalDatabaseSystem(this));
+                    _systemManager.RegisterSystem(SystemGroups.Logic, new ShipSyncSystem(this));
                     break;
                 case ScriptMode.Server:
-                    _systemManager.RegisterSystem(SystemGroups.Logic, new ServerDatabaseSystem());
+                    _systemManager.RegisterSystem(SystemGroups.Logic, new ServerDatabaseSystem(this));
                     break;
                 case ScriptMode.ServerShip:
                     _systemManager.RegisterSystem(SystemGroups.Logic, new ShipSystem(this));
-                    _systemManager.RegisterSystem(SystemGroups.Logic, new ServerDatabaseSystem());
+                    _systemManager.RegisterSystem(SystemGroups.Logic, new LocalDatabaseSystem(this));
+                    _systemManager.RegisterSystem(SystemGroups.Logic, new ShipSyncSystem(this));
+                    _systemManager.RegisterSystem(SystemGroups.Logic, new ServerDatabaseSystem(this));
                     break;
             }
 

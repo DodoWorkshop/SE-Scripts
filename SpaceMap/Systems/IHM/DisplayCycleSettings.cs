@@ -6,7 +6,6 @@ namespace IngameScript
 
         public static readonly DisplayMode[] CycleOrder =
         {
-            DisplayMode.General,
             DisplayMode.Map,
             DisplayMode.Map3D,
             DisplayMode.Database,
@@ -15,6 +14,6 @@ namespace IngameScript
 
         #endregion
 
-        public DisplayMode CurrentMode { get; set; } = DisplayMode.General;
+        public DisplayMode CurrentMode { get; set; } = DisplayMode.Map;
     }
 }

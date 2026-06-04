@@ -75,34 +75,62 @@ namespace IngameScript
                 .ToList();
         }
 
+        public string SerializeAll()
+        {
+            if (_mapEntries.Count == 0) return string.Empty;
+            var lines = _mapEntries.Values.Select(EntryToLine).ToArray();
+            return string.Join("\n", lines);
+        }
+
+        public void MergeFrom(string serializedData)
+        {
+            if (string.IsNullOrWhiteSpace(serializedData)) return;
+            foreach (var line in serializedData.Split('\n'))
+            {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                try
+                {
+                    var incoming = LineToEntry(line);
+                    IMapEntry existing;
+                    if (_mapEntries.TryGetValue(incoming.Id, out existing))
+                    {
+                        if (incoming.UpdateDate > existing.UpdateDate)
+                            existing.UpdateDate = incoming.UpdateDate;
+                        if (string.IsNullOrEmpty(existing.CustomName) && !string.IsNullOrEmpty(incoming.CustomName))
+                            existing.CustomName = incoming.CustomName;
+                    }
+                    else
+                    {
+                        _mapEntries[incoming.Id] = incoming;
+                    }
+                }
+                catch { }
+            }
+        }
+
         public void Save(MyIni ini)
         {
-            // TODO: handle potential other types
-            var lines = _mapEntries.Values
-                .Select(entry =>
-                {
-                    var inv = System.Globalization.CultureInfo.InvariantCulture;
-                    var data = new[]
-                    {
-                        entry.TypeKey,
-                        entry.Id.ToString(inv),
-                        entry.BaseName,
-                        entry.CustomName ?? "",
-                        entry.Position.X.ToString(inv),
-                        entry.Position.Y.ToString(inv),
-                        entry.Position.Z.ToString(inv),
-                        entry.UpdateDate.ToString(inv),
-                        entry.FirstDetectionDate.ToString(inv)
-                    };
-
-                    return string.Join(Sep.ToString(), data);
-                })
-                .ToArray();
-
-            var mapData = string.Join("\n", lines);
-
+            var mapData = SerializeAll();
             ini.AddSection(MapEntriesSectionKey);
             ini.Set(MapEntriesSectionKey, MapEntriesSaveKey, mapData);
+        }
+
+        private string EntryToLine(IMapEntry entry)
+        {
+            var inv = System.Globalization.CultureInfo.InvariantCulture;
+            var data = new[]
+            {
+                entry.TypeKey,
+                entry.Id.ToString(inv),
+                entry.BaseName,
+                entry.CustomName ?? "",
+                entry.Position.X.ToString(inv),
+                entry.Position.Y.ToString(inv),
+                entry.Position.Z.ToString(inv),
+                entry.UpdateDate.ToString(inv),
+                entry.FirstDetectionDate.ToString(inv)
+            };
+            return string.Join(Sep.ToString(), data);
         }
 
         public void Load(MyIni ini)

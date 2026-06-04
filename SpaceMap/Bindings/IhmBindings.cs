@@ -35,10 +35,14 @@ namespace IngameScript
                 if (block is IMyTextSurface)
                 {
                     var match = _displayNameRegex.Match(block.CustomName);
-                    var displayMode = DisplayMode.General;
+                    var displayMode = DisplayMode.Map;
                     if (match.Groups.Count >= 2 && !string.IsNullOrEmpty(match.Groups[1].Value))
                     {
-                        displayMode = (DisplayMode)Enum.Parse(typeof(DisplayMode), match.Groups[1].Value);
+                        try
+                        {
+                            displayMode = (DisplayMode)Enum.Parse(typeof(DisplayMode), match.Groups[1].Value);
+                        }
+                        catch { }
                     }
 
                     var panelSurface = new PanelSurface((IMyTextSurface)block, displayMode);
@@ -55,9 +59,9 @@ namespace IngameScript
                         var surfaces = new List<PanelSurface>();
 
                         if (provider.SurfaceCount > 0)
-                            surfaces.Add(new PanelSurface(provider.GetSurface(0), DisplayMode.General));
+                            surfaces.Add(new PanelSurface(provider.GetSurface(0), DisplayMode.Map));
                         if (provider.SurfaceCount > 1)
-                            surfaces.Add(new PanelSurface(provider.GetSurface(1), DisplayMode.Map));
+                            surfaces.Add(new PanelSurface(provider.GetSurface(1), DisplayMode.Map3D));
                         if (provider.SurfaceCount > 2)
                             surfaces.Add(new PanelSurface(provider.GetSurface(2), DisplayMode.Database));
 
@@ -73,7 +77,9 @@ namespace IngameScript
                             if (partSplit.Length == 2)
                             {
                                 var index = int.Parse(partSplit[0]);
-                                var mode = (DisplayMode)Enum.Parse(typeof(DisplayMode), partSplit[1]);
+                                DisplayMode mode;
+                        try { mode = (DisplayMode)Enum.Parse(typeof(DisplayMode), partSplit[1]); }
+                        catch { continue; }
                                 var surf = provider.GetSurface(index);
                                 if (surf != null)
                                     surfaces.Add(new PanelSurface(surf, mode));

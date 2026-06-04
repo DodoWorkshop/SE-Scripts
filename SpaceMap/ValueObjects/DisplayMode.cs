@@ -4,12 +4,12 @@
     {
         #region mdk preserve
 
-        General,
         Map,
         Map3D,
         Database,
         Detection,
         Help,
+        Sync,
         Cycle
 
         #endregion
