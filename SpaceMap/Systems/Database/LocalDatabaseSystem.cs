@@ -35,19 +35,26 @@ namespace IngameScript
                     _eventSink.Produce(new NewMapEntryRegisteredEvent(entry));
                 }
             }
+            else
+            {
+                previousEntry.UpdateDate = DateTime.Now.Ticks;
+                _mapEntryRepository.Save(previousEntry);
+            }
         }
 
         private IMapEntry BuildEntryFromDetectedEntity(MyDetectedEntityInfo detectedEntity)
         {
             if (detectedEntity.Type == MyDetectedEntityType.Asteroid)
             {
+                var now = DateTime.Now.Ticks;
                 return new Asteroid(
                     detectedEntity.EntityId,
                     "A" + NameGenerator.Generate(detectedEntity.EntityId),
-                    detectedEntity.Position
+                    detectedEntity.Position,
+                    now
                 )
                 {
-                    UpdateDate = DateTime.Now.Ticks
+                    UpdateDate = now
                 };
             }
 

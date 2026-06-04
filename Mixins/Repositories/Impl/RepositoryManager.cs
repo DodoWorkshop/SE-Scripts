@@ -48,7 +48,10 @@ namespace IngameScript
             }
             catch (Exception e)
             {
-                onError?.Invoke(e);
+                if (onError != null)
+                    onError(e);
+                else
+                    throw;
             }
         }
 

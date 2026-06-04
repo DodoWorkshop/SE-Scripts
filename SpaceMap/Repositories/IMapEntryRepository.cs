@@ -17,5 +17,9 @@ namespace IngameScript
         void Clear();
 
         List<T> GetAllInArea<T>(Vector3D center, long radius) where T : IMapEntry;
+
+        string SerializeAll();
+
+        void MergeFrom(string serializedData);
     }
 }

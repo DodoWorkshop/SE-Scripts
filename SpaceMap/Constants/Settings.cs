@@ -1,4 +1,4 @@
-﻿namespace IngameScript
+namespace IngameScript
 {
     public static class Settings
     {

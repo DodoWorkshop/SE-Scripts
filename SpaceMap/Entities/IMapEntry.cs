@@ -4,6 +4,8 @@ namespace IngameScript
 {
     public interface IMapEntry
     {
+        string TypeKey { get; }
+
         long Id { get; }
 
         string BaseName { get; }
@@ -13,5 +15,7 @@ namespace IngameScript
         Vector3D Position { get; }
 
         long UpdateDate { get; set; }
+
+        long FirstDetectionDate { get; }
     }
 }

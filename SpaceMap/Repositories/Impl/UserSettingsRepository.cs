@@ -4,26 +4,27 @@ namespace IngameScript
 {
     public class UserSettingsRepository : IUserSettingsRepository
     {
+        private const string RepositorySectionKey = "UserSettingsRepository";
         private const string DetectionDistanceKey = "detectionDistance";
         private const string MapScaleKey = "mapScale";
 
-        public uint DetectionDistance { get; set; } = 10000;
+        public uint DetectionDistance { get; set; } = Program.DefaultDetectionDistance;
 
-        public uint MapScale { get; set; } = 5000;
+        public uint MapScale { get; set; } = Program.DefaultMapScale;
 
         public void Save(MyIni ini)
         {
-            var sectionKey = GetType().Name;
-            ini.AddSection(sectionKey);
-            ini.Set(sectionKey, DetectionDistanceKey, DetectionDistance);
-            ini.Set(sectionKey, MapScaleKey, MapScale);
+            ini.AddSection(RepositorySectionKey);
+            ini.Set(RepositorySectionKey, DetectionDistanceKey, DetectionDistance);
+            ini.Set(RepositorySectionKey, MapScaleKey, MapScale);
         }
 
         public void Load(MyIni ini)
         {
-            var sectionKey = GetType().Name;
-            DetectionDistance = ini.Get(sectionKey, DetectionDistanceKey).ToUInt32();
-            MapScale = ini.Get(sectionKey, MapScaleKey).ToUInt32();
+            if (ini.ContainsKey(RepositorySectionKey, DetectionDistanceKey))
+                DetectionDistance = ini.Get(RepositorySectionKey, DetectionDistanceKey).ToUInt32();
+            if (ini.ContainsKey(RepositorySectionKey, MapScaleKey))
+                MapScale = ini.Get(RepositorySectionKey, MapScaleKey).ToUInt32();
         }
     }
 }

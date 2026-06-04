@@ -1,5 +1,138 @@
-﻿R e a d m e
------------
+Space Map - Instructions
+========================
 
-In this file you can include any instructions or other comments you want to have injected onto the 
-top of your final script. You can safely delete this file if you do not want any such comments.
+Detects entities (asteroids, ...) via camera raycast, stores them in a
+database, and displays them on configurable screens. Ships can synchronize
+their data with a nearby Server via Inter-Grid Communication (IGC).
+
+------------------------------------------
+CONFIGURATION
+------------------------------------------
+
+Edit the top of the script to set the operating mode:
+
+  Mode = "Ship"       - Detects entities, maintains a local database,
+                        and broadcasts it to nearby servers every ~60s.
+  Mode = "Server"     - Receives databases from ships and merges them.
+                        Does not detect on its own.
+  Mode = "ServerShip" - Both detects and acts as a server.
+
+------------------------------------------
+BLOCK NAMING - Tag [SM]
+------------------------------------------
+
+Add the [SM] tag to any block you want SpaceMap to control.
+
+  Camera:
+    Any camera named with [SM] will be used for raycasting.
+    Example: "Camera [SM]"
+
+  Displays (LCD, cockpit screens, etc.):
+    Append [SM] to use default mode assignment, or [SM:<mode>]
+    to pick a specific screen layout.
+
+    Available modes:
+      Map       - 2D top-down radar circle. Objects are projected
+                  onto the ship's horizontal plane. Depth (up/down)
+                  is shown via a positional offset (isometric hint).
+      Map3D     - 3D perspective view. The horizontal plane appears
+                  as a squished ellipse. Each object is connected to
+                  its position on the plane by a dashed vertical line,
+                  showing its altitude relative to the ship.
+      Database  - Full entry list: name, distance, detection age.
+      Detection - Live raycast info: current target, range, charge.
+      Help      - Quick reference of all available commands.
+      Sync      - Synchronization status.
+                  Server: connected sources, last sync, entry counts.
+                  Ship: last broadcast time and entries sent.
+      Cycle     - Rotates through Map, Map3D, Database, Detection
+                  via the disp_next command.
+
+    Single-surface blocks (basic LCD):
+      [SM]            -> Map (default)
+      [SM:Map3D]      -> 3D Map mode
+      [SM:Database]   -> Database mode
+      [SM:Detection]  -> Detection mode
+      [SM:Help]       -> Help mode
+      [SM:Sync]       -> Sync status mode
+      [SM:Cycle]      -> Cycle mode
+
+    Multi-surface blocks (cockpits, terminals, ...):
+      [SM]            -> Surface 0 = Map, 1 = Map3D, 2 = Database
+      [SM:Auto]       -> Same as above
+      [SM:0-Map3D;1-Detection]
+                      -> Surface 0 = Map3D, surface 1 = Detection
+                         (any surface index, any mode, separated by ;)
+
+------------------------------------------
+COMMANDS
+------------------------------------------
+
+Run commands via the programmable block terminal argument field,
+or from a button/timer block set to "Run with argument".
+Use a screen tagged [SM:Help] for the in-game command reference.
+
+  map_scale <meters|+delta|-delta>      Alias: ms
+    Set or adjust the map display radius (Map and Map3D views).
+    Example: map_scale 5000 | map_scale +1000 | ms -500
+
+  detect_range <meters|+delta|-delta>   Alias: dr
+    Set or adjust the camera detection range.
+    Example: detect_range 8000 | detect_range +2000 | dr -1000
+
+  entry_rename <identifier> <newName>   Alias: ren
+    Assign a custom name to a map entry.
+    <identifier> can be:
+      detected (or d) - the entity currently in the detection crosshair
+      <id>            - entity ID (shown in Database mode)
+      <name>          - base name (e.g. AXK-42) or current custom name
+    Example: entry_rename detected "Gold Mine"
+    Example: ren AXK-42 "Gold Mine"
+
+  db_scroll (up|down|<n>)               Alias: dbs
+    Scroll the database list view. up/down moves by 5 entries.
+    Example: db_scroll down | dbs up | dbs -3
+
+  db_sort <mode>                        Alias: dbso
+    Set the database sort order. Modes: distance, name, age, new
+    Example: db_sort name | dbso distance
+
+  db_sort_next                          Alias: dbsn
+    Cycle to the next database sort mode.
+    Order: Distance -> Name -> Age -> New -> Distance -> ...
+    Example: db_sort_next
+
+  disp_next [mode]                      Alias: dn
+    Cycle the display mode on screens tagged [SM:Cycle],
+    or jump to a specific mode.
+    Modes: Map, Map3D, Database, Detection, Help, Sync
+    Example: disp_next | dn Map3D | dn Sync
+
+------------------------------------------
+SYNC
+------------------------------------------
+
+In Ship and ServerShip modes, the script automatically broadcasts the
+local database to nearby servers every ~60 seconds via IGC. No manual
+setup is required — antenna range determines reach.
+
+The server merges received data with its own, keeping the most recently
+detected version of each entry. Custom names set locally are preserved
+and propagated to other sources.
+
+The [SM:Sync] screen shows live synchronization status:
+  Ship mode   : time since last broadcast, number of entries sent.
+  Server mode : list of sources with last sync age and entry counts.
+
+Channel : SM_SYNC  (configurable via SyncChannel in settings)
+Interval: ~60s     (configurable via SyncBroadcastInterval in settings)
+
+------------------------------------------
+DETECTION AGE
+------------------------------------------
+
+Entries are timestamped at each detection. Displays show:
+  [!]  - Detected less than 60 seconds ago (new entry)
+  2m   - Last seen 2 minutes ago
+  1h   - Last seen 1 hour ago
+  ?    - Detection time unknown (legacy entry)

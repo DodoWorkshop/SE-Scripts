@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace IngameScript
 {
@@ -7,18 +7,22 @@ namespace IngameScript
         private readonly Program _program;
         private readonly IhmBindings _bindings;
         private readonly Dictionary<DisplayMode, IIhmModule> _modules;
+        private readonly DisplayCycleSettings _cycleSettings;
         private readonly Queue<IEnumerator<bool>> _renderQueue = new Queue<IEnumerator<bool>>();
 
         public IhmSystem(Program program)
         {
             _program = program;
             _bindings = new IhmBindings();
+            _cycleSettings = program.Container.GetItem<DisplayCycleSettings>();
             _modules = new Dictionary<DisplayMode, IIhmModule>
             {
-                { DisplayMode.General, new GeneralIhmModule(_program) },
-                { DisplayMode.Database, new DatabaseIhmModule() },
-                { DisplayMode.Map, new MapIhmModule(_program) },
+                { DisplayMode.Map,       new MapIhmModule(_program) },
+                { DisplayMode.Map3D,     new Map3DIhmModule(_program) },
+                { DisplayMode.Database,  new DatabaseIhmModule(_program) },
                 { DisplayMode.Detection, new DetectionIhmModule(_program) },
+                { DisplayMode.Help,      new HelpIhmModule(_program) },
+                { DisplayMode.Sync,      new SyncIhmModule(_program) },
             };
 
             var eventStream = program.Container.GetItem<IEventStream<ISpaceMapEvent>>();
@@ -29,6 +33,26 @@ namespace IngameScript
             });
         }
 
+        public void RefreshCycleSurfaces()
+        {
+            IIhmModule module;
+            if (!_modules.TryGetValue(_cycleSettings.CurrentMode, out module)) return;
+
+            foreach (var panel in _bindings.Panels)
+            {
+                foreach (var surface in panel.Surfaces)
+                {
+                    if (surface.Mode == DisplayMode.Cycle)
+                        module.InitSurface(panel, surface);
+                }
+            }
+        }
+
+        private DisplayMode ResolveMode(DisplayMode mode)
+        {
+            return mode == DisplayMode.Cycle ? _cycleSettings.CurrentMode : mode;
+        }
+
         private void HandleBlocDetectionPulseEvents(BlocDetectionPulseEvent message)
         {
             _bindings.SearchScreens(_program);
@@ -37,7 +61,9 @@ namespace IngameScript
             {
                 foreach (var surface in panel.Surfaces)
                 {
-                    _modules[surface.Mode].InitSurface(panel, surface);
+                    IIhmModule module;
+                    if (_modules.TryGetValue(ResolveMode(surface.Mode), out module))
+                        module.InitSurface(panel, surface);
                 }
             }
         }
@@ -49,7 +75,9 @@ namespace IngameScript
             {
                 foreach (var surface in panel.Surfaces)
                 {
-                    _renderQueue.Enqueue(_modules[surface.Mode].RenderTo(panel, surface));
+                    IIhmModule module;
+                    if (_modules.TryGetValue(ResolveMode(surface.Mode), out module))
+                        _renderQueue.Enqueue(module.RenderTo(panel, surface));
                 }
             }
 

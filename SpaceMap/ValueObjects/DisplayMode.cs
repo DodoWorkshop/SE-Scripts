@@ -2,10 +2,16 @@
 {
     public enum DisplayMode
     {
-        General,
+        #region mdk preserve
+
         Map,
+        Map3D,
         Database,
-        Nearby,
-        Detection
+        Detection,
+        Help,
+        Sync,
+        Cycle
+
+        #endregion
     }
 }
